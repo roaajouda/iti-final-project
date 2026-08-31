@@ -1,22 +1,55 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/core/exceptions/app_exception.dart';
 import 'package:flutter_application_2/features/auth/controller/auth_controller.dart';
 
 class AuthProvider extends ChangeNotifier {
-  AuthController controller = AuthController();
+  final AuthController controller = AuthController();
   String? errorMessage;
-  AuthStates state = AuthStates.idel;
-  void login(String email, String password) async {
-    state = AuthStates.loading;
-    String res = await controller.login(email, password);
-    if (res != 'success') {
-      errorMessage = res;
-      state = AuthStates.error;
-    } else {
-      state = AuthStates.sucess;
-      errorMessage = null;
+  AuthState state = AuthState.idel;
+  Future<void> login(String email, String password) async {
+    state = AuthState.loading;
+    errorMessage = null;
+    notifyListeners();
+
+    try {
+      await controller.login(email, password);
+
+      state = AuthState.success;
+    } on AppException catch (e) {
+      errorMessage = e.message;
+      state = AuthState.error;
+    } catch (e) {
+      errorMessage = 'Something went wrong';
+      state = AuthState.error;
     }
+
+    notifyListeners();
+  }
+
+  Future<void> signUp(
+    String email,
+    String password,
+    String confirmPassword,
+  ) async {
+    state = AuthState.loading;
+    errorMessage = null;
+
+    notifyListeners();
+
+    try {
+      await controller.signUp(email, password, confirmPassword);
+
+      state = AuthState.success;
+    } on AppException catch (e) {
+      errorMessage = e.message;
+      state = AuthState.error;
+    } catch (e) {
+      errorMessage = 'Something went wrong.';
+      state = AuthState.error;
+    }
+
     notifyListeners();
   }
 }
 
-enum AuthStates { idel, loading, error, sucess }
+enum AuthState { idel, loading, error, success }
