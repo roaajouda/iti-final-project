@@ -3,16 +3,16 @@ import 'package:flutter_application_2/core/exceptions/app_exception.dart';
 import 'package:flutter_application_2/features/auth/controller/auth_controller.dart';
 
 class AuthProvider extends ChangeNotifier {
-  final AuthController controller = AuthController();
+  final AuthController _controller = AuthController();
   String? errorMessage;
-  AuthState state = AuthState.idel;
+  AuthState state = AuthState.idle;
   Future<void> login(String email, String password) async {
     state = AuthState.loading;
     errorMessage = null;
     notifyListeners();
 
     try {
-      await controller.login(email, password);
+      await _controller.login(email, password);
 
       state = AuthState.success;
     } on AppException catch (e) {
@@ -37,7 +37,7 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      await controller.signUp(email, password, confirmPassword);
+      await _controller.signUp(email, password, confirmPassword);
 
       state = AuthState.success;
     } on AppException catch (e) {
@@ -52,4 +52,4 @@ class AuthProvider extends ChangeNotifier {
   }
 }
 
-enum AuthState { idel, loading, error, success }
+enum AuthState { idle, loading, error, success }

@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_application_2/core/exceptions/app_exception.dart';
-import 'package:flutter_application_2/services/firebase_auth_service.dart';
+import 'package:flutter_application_2/core/services/firebase_auth_service.dart';
 
 class AuthController {
   final FirebaseAuthService _authService = FirebaseAuthService();
@@ -23,6 +23,8 @@ class AuthController {
         case 'too-many-requests':
           throw AuthException('Too many attempts. Try again later');
 
+        case 'network-request-failed':
+          throw NetworkException();
         default:
           throw AuthException('Something went wrong');
       }

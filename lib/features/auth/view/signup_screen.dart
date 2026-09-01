@@ -11,11 +11,9 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
-  final TextEditingController _emailController =
-      TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
 
-  final TextEditingController _passwordController =
-      TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   final TextEditingController _confirmPasswordController =
       TextEditingController();
@@ -35,17 +33,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
     if (!mounted) return;
 
     if (provider.state == AuthState.error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(provider.errorMessage!),
-        ),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(provider.errorMessage!)));
     } else if (provider.state == AuthState.success) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (context) => const HomeScreen(),
-        ),
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
       );
     }
   }
@@ -61,9 +54,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sign Up'),
-      ),
+      appBar: AppBar(title: const Text('Sign Up')),
 
       body: SafeArea(
         child: Center(
@@ -89,21 +80,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     const Text(
                       'Create a new account',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 16,
-                      ),
+                      style: TextStyle(color: Colors.grey, fontSize: 16),
                     ),
-
                     const SizedBox(height: 40),
-
                     TextField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
                       decoration: const InputDecoration(
                         labelText: 'Email',
-                        prefixIcon:
-                            Icon(Icons.email_outlined),
+                        prefixIcon: Icon(Icons.email_outlined),
                         border: OutlineInputBorder(),
                       ),
                     ),
@@ -115,15 +100,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       obscureText: _obscurePassword,
                       decoration: InputDecoration(
                         labelText: 'Password',
-                        prefixIcon:
-                            const Icon(Icons.lock_outline),
+                        prefixIcon: const Icon(Icons.lock_outline),
                         border: const OutlineInputBorder(),
 
                         suffixIcon: IconButton(
                           onPressed: () {
                             setState(() {
-                              _obscurePassword =
-                                  !_obscurePassword;
+                              _obscurePassword = !_obscurePassword;
                             });
                           },
                           icon: Icon(
@@ -142,8 +125,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       obscureText: _obscureConfirmPassword,
                       decoration: InputDecoration(
                         labelText: 'Confirm Password',
-                        prefixIcon:
-                            const Icon(Icons.lock_outline),
+                        prefixIcon: const Icon(Icons.lock_outline),
                         border: const OutlineInputBorder(),
 
                         suffixIcon: IconButton(
@@ -167,24 +149,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     SizedBox(
                       height: 50,
                       child: ElevatedButton(
-                        onPressed:
-                            provider.state == AuthState.loading
-                                ? null
-                                : signUp,
+                        onPressed: provider.state == AuthState.loading
+                            ? null
+                            : signUp,
 
-                        child:
-                            provider.state == AuthState.loading
-                                ? const SizedBox(
-                                    height: 22,
-                                    width: 22,
-                                    child:
-                                        CircularProgressIndicator(),
-                                  )
-                                : const Text(
-                                    'Sign Up',
-                                    style:
-                                        TextStyle(fontSize: 16),
-                                  ),
+                        child: provider.state == AuthState.loading
+                            ? const SizedBox(
+                                height: 22,
+                                width: 22,
+                                child: CircularProgressIndicator(),
+                              )
+                            : const Text(
+                                'Sign Up',
+                                style: TextStyle(fontSize: 16),
+                              ),
                       ),
                     ),
                   ],
@@ -197,4 +175,3 @@ class _SignUpScreenState extends State<SignUpScreen> {
     );
   }
 }
-
