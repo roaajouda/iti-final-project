@@ -11,9 +11,12 @@ class SignUpScreen extends StatefulWidget {
 }
 
 class _SignUpScreenState extends State<SignUpScreen> {
+  final TextEditingController _nameController = TextEditingController();
+
   final TextEditingController _emailController = TextEditingController();
 
-  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _passwordController =
+      TextEditingController();
 
   final TextEditingController _confirmPasswordController =
       TextEditingController();
@@ -25,6 +28,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final provider = context.read<AuthProvider>();
 
     await provider.signUp(
+      _nameController.text.trim(),
       _emailController.text.trim(),
       _passwordController.text.trim(),
       _confirmPasswordController.text.trim(),
@@ -33,18 +37,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
     if (!mounted) return;
 
     if (provider.state == AuthState.error) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(provider.errorMessage!)));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(provider.errorMessage!),
+        ),
+      );
     } else if (provider.state == AuthState.success) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
+        MaterialPageRoute(
+          builder: (context) => const HomeScreen(),
+        ),
       );
     }
   }
 
   @override
   void dispose() {
+    _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
@@ -54,13 +64,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Sign Up')),
-
+      appBar: AppBar(
+        title: const Text('Sign Up'),
+      ),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
-
             child: Consumer<AuthProvider>(
               builder: (context, provider, child) {
                 return Column(
@@ -80,9 +90,28 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     const Text(
                       'Create a new account',
                       textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.grey, fontSize: 16),
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 16,
+                      ),
                     ),
+
                     const SizedBox(height: 40),
+
+                    // Name
+                    TextField(
+                      controller: _nameController,
+                      keyboardType: TextInputType.name,
+                      decoration: const InputDecoration(
+                        labelText: 'Name',
+                        prefixIcon: Icon(Icons.person_outline),
+                        border: OutlineInputBorder(),
+                      ),
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Email
                     TextField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
@@ -95,6 +124,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                     const SizedBox(height: 16),
 
+                    // Password
                     TextField(
                       controller: _passwordController,
                       obscureText: _obscurePassword,
@@ -102,7 +132,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         labelText: 'Password',
                         prefixIcon: const Icon(Icons.lock_outline),
                         border: const OutlineInputBorder(),
-
                         suffixIcon: IconButton(
                           onPressed: () {
                             setState(() {
@@ -120,6 +149,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                     const SizedBox(height: 16),
 
+                    // Confirm Password
                     TextField(
                       controller: _confirmPasswordController,
                       obscureText: _obscureConfirmPassword,
@@ -127,7 +157,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         labelText: 'Confirm Password',
                         prefixIcon: const Icon(Icons.lock_outline),
                         border: const OutlineInputBorder(),
-
                         suffixIcon: IconButton(
                           onPressed: () {
                             setState(() {
@@ -152,7 +181,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         onPressed: provider.state == AuthState.loading
                             ? null
                             : signUp,
-
                         child: provider.state == AuthState.loading
                             ? const SizedBox(
                                 height: 22,
