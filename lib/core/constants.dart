@@ -1,4 +1,0 @@
-class Constants {
-  static const String tmdbToken =
-      'eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJiMjUxZmI2MmUxMGE1M2VlYzc5MDQ2ZmE4MzY4ZmQ4MCIsIm5iZiI6MTc4ODI2MjI0NC40NTYsInN1YiI6IjZhOTZiNzY0MzVkYzI0MjUwYjZiYWUzNCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.uWYDlYtaKDbuln-VqTCPcODl15r4HNF6PxYzHtKi59c';
-}
