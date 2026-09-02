@@ -4,7 +4,6 @@ import 'package:flutter_application_2/features/auth/provider/auth_provider.dart'
 import 'package:flutter_application_2/features/auth/view/login_screen.dart';
 import 'package:flutter_application_2/features/category/provider/category_provider.dart';
 import 'package:flutter_application_2/features/home/provider/home_provider.dart';
-import 'package:flutter_application_2/features/movie_list/provider/movie_list_provider.dart';
 import 'package:flutter_application_2/firebase_options.dart';
 import 'package:provider/provider.dart';
 

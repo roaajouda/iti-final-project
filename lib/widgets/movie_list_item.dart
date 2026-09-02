@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/features/movie-details/view/movie_details_screen.dart';
 import 'package:flutter_application_2/models/movies.dart';
 import 'package:flutter_application_2/widgets/movie_card.dart';
 
 class MovieListItem extends StatelessWidget {
   final Result movie;
-  final VoidCallback? onTap;
 
-  const MovieListItem({super.key, required this.movie, this.onTap});
+  const MovieListItem({super.key, required this.movie});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () => Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => MovieDetailsScreen(movieId: movie.id),
+        ),
+      ),
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         padding: const EdgeInsets.all(12),

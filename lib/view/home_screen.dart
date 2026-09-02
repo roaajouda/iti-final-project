@@ -113,18 +113,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   MovieSection(
                     title: 'Top Rated',
                     movies: provider.topRatedMovies,
-                    onSeeAll: () => _goToMovieList(
-                      'Top Rated',
-                      provider.fetchTopRatedPage,
-                    ),
+                    onSeeAll: () =>
+                        _goToMovieList('Top Rated', provider.fetchTopRatedPage),
                   ),
                   MovieSection(
                     title: 'Upcoming',
                     movies: provider.upcomingMovies,
-                    onSeeAll: () => _goToMovieList(
-                      'Upcoming',
-                      provider.fetchUpcomingPage,
-                    ),
+                    onSeeAll: () =>
+                        _goToMovieList('Upcoming', provider.fetchUpcomingPage),
                   ),
                   const SizedBox(height: 24),
                 ],
@@ -188,32 +184,23 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildSearchBar() {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 18, 16, 0),
-      child: TextField(
-        readOnly: true,
-        onTap: () {
-          // Navigate to SearchScreen — add later
-        },
-        style: const TextStyle(color: Colors.white),
-        decoration: InputDecoration(
-          hintText: 'Search movies',
-          hintStyle: const TextStyle(color: Color(0xff777272)),
-          prefixIcon: const Icon(Icons.search, color: Color(0xff777272)),
-          filled: true,
-          fillColor: const Color(0xff151313),
-          contentPadding: const EdgeInsets.symmetric(vertical: 15),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(11),
-            borderSide: const BorderSide(color: Color(0xff302D2D)),
+    return GestureDetector(
+      onTap: () {},
+      child: AbsorbPointer(
+        // prevents keyboard from opening on home screen
+        child: Container(
+          height: 48,
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          decoration: BoxDecoration(
+            color: const Color(0xFF2A2A2A),
+            borderRadius: BorderRadius.circular(12),
           ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(11),
-            borderSide: const BorderSide(color: Color(0xff302D2D)),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(11),
-            borderSide: const BorderSide(color: Color(0xffffc107)),
+          child: const Row(
+            children: [
+              Icon(Icons.search, color: Colors.white38, size: 20),
+              SizedBox(width: 10),
+              Text('Search TMDB...', style: TextStyle(color: Colors.white38)),
+            ],
           ),
         ),
       ),
@@ -235,8 +222,7 @@ class _HomeScreenState extends State<HomeScreen> {
           return GestureDetector(
             onTap: () => _goToCategory(genre),
             child: Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
                 color: const Color(0xff1a1a1a),
                 borderRadius: BorderRadius.circular(20),
@@ -253,6 +239,45 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+  void _onBottomNavTap(int index) {
+    switch (index) {
+      case 0:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        );
+        break;
+
+      case 1:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        );
+        break;
+
+      case 2:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        );
+        break;
+
+      case 3:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        );
+        break;
+
+      case 4:
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => const HomeScreen()),
+        );
+        break;
+    }
+  }
+
   Widget _buildBottomNavBar() {
     return BottomNavigationBar(
       backgroundColor: const Color(0xff0F0E0E),
@@ -262,9 +287,7 @@ class _HomeScreenState extends State<HomeScreen> {
       unselectedItemColor: const Color(0xff777272),
       selectedFontSize: 9,
       unselectedFontSize: 9,
-      onTap: (index) {
-        // Wire up other tabs when screens are ready
-      },
+      onTap: _onBottomNavTap,
       items: const [
         BottomNavigationBarItem(
           icon: Icon(Icons.home_outlined),

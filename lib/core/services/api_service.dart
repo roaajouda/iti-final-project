@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:http/http.dart' as http;
 import 'package:flutter_application_2/core/constants.dart';
 import 'package:flutter_application_2/core/exceptions/app_exception.dart';
@@ -11,16 +12,17 @@ class APIService {
   static const String _authHeader = 'Bearer ${Constants.tmdbToken}';
 
   Map<String, String> get _headers => {
-        'Authorization': _authHeader,
-        'accept': 'application/json',
-      };
+    'Authorization': _authHeader,
+    'accept': 'application/json',
+  };
 
   // ─── Private helpers ───────────────────────────────────────────────
 
-  Future<Map<String, dynamic>> _get(String path,
-      [Map<String, String>? params]) async {
-    final uri = Uri.parse('$_baseUrl$path')
-        .replace(queryParameters: params);
+  Future<Map<String, dynamic>> _get(
+    String path, [
+    Map<String, String>? params,
+  ]) async {
+    final uri = Uri.parse('$_baseUrl$path').replace(queryParameters: params);
     try {
       final response = await http.get(uri, headers: _headers);
       if (response.statusCode == 200) {
@@ -97,10 +99,7 @@ class APIService {
   // ─── Search ────────────────────────────────────────────────────────
 
   Future<Movies> searchMovies(String query, {int page = 1}) async {
-    final json = await _get('/search/movie', {
-      'query': query,
-      'page': '$page',
-    });
+    final json = await _get('/search/movie', {'query': query, 'page': '$page'});
     return _parseSearchMovies(json);
   }
 
@@ -109,5 +108,14 @@ class APIService {
   Future<SingleMovie> getMovieDetails(int movieId) async {
     final json = await _get('/movie/$movieId');
     return SingleMovie.fromJson(json);
+  }
+  // ─────────────────────────────────────────────────────────────────────────────
+  // ADD THIS METHOD to lib/core/services/api_service.dart
+  // (paste it right after getMovieDetails)
+  // ─────────────────────────────────────────────────────────────────────────────
+
+  Future<Movies> getSimilarMovies(int movieId, {int page = 1}) async {
+    final json = await _get('/movie/$movieId/similar', {'page': '$page'});
+    return Movies.fromJson(json);
   }
 }
