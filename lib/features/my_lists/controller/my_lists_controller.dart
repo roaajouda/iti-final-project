@@ -1,8 +1,6 @@
 import 'package:flutter_application_2/core/models/movie_record.dart';
 import 'package:flutter_application_2/core/services/hive_service.dart';
 
-import '../../../core/services/database_service.dart';
-
 class MyListsController {
   final HiveService _db = HiveService();
 

@@ -25,34 +25,22 @@ Future<void> main() async {
 
   await hiveService.init();
 
-  if (FirebaseAuth.instance.currentUser != null) {
+  final user = await FirebaseAuth.instance.authStateChanges().first;
+
+  if (user != null) {
     await hiveService.openUserBoxes();
   }
 
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (_) => AuthUserProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => HomeProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => CategoryProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => FavouritesProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => MyListsProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => SearchProvider(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => ProfileProvider(),
-        ),
+        ChangeNotifierProvider(create: (_) => AuthUserProvider()),
+        ChangeNotifierProvider(create: (_) => HomeProvider()),
+        ChangeNotifierProvider(create: (_) => CategoryProvider()),
+        ChangeNotifierProvider(create: (_) => FavouritesProvider()),
+        ChangeNotifierProvider(create: (_) => MyListsProvider()),
+        ChangeNotifierProvider(create: (_) => SearchProvider()),
+        ChangeNotifierProvider(create: (_) => ProfileProvider()),
       ],
       child: const MyApp(),
     ),
