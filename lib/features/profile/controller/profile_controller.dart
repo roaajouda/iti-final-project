@@ -33,7 +33,8 @@ class ProfileController {
   }
 
   Future<void> logout() async {
-  await _db.closeUserBoxes();
-  await _authService.logOut();
-}
+    await _db.closeUserBoxes();
+    await _authService.logOut();
+    await _localStorage.clearUser(); 
+  }
 }
