@@ -170,7 +170,6 @@ class _MovieDetailsView extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Poster
         ClipRRect(
           borderRadius: BorderRadius.circular(10),
           child: movie.posterPath != null
@@ -185,7 +184,6 @@ class _MovieDetailsView extends StatelessWidget {
         ),
         const SizedBox(width: 16),
 
-        // Info
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
