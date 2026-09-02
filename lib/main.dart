@@ -6,6 +6,7 @@ import 'package:flutter_application_2/features/category/provider/category_provid
 import 'package:flutter_application_2/features/favourites/provider/favourites_provider.dart';
 import 'package:flutter_application_2/features/home/provider/home_provider.dart';
 import 'package:flutter_application_2/features/my_lists/provider/my_lists_provider.dart';
+import 'package:flutter_application_2/features/search/provider/search_provider.dart';
 import 'package:flutter_application_2/firebase_options.dart';
 import 'package:provider/provider.dart';
 
@@ -20,6 +21,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => CategoryProvider()),
         ChangeNotifierProvider(create: (_) => FavouritesProvider()),
         ChangeNotifierProvider(create: (_) => MyListsProvider()),
+        ChangeNotifierProvider(create: (_) => SearchProvider()),
       ],
       child: const MyApp(),
     ),

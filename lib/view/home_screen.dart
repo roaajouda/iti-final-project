@@ -6,6 +6,7 @@ import 'package:flutter_application_2/features/favourites/view/favourites_screen
 import 'package:flutter_application_2/features/home/provider/home_provider.dart';
 import 'package:flutter_application_2/features/movie_list/view/movie_list_screen.dart';
 import 'package:flutter_application_2/features/my_lists/view/my_lists_screen.dart';
+import 'package:flutter_application_2/features/search/view/search_screen.dart';
 import 'package:flutter_application_2/models/movies.dart';
 import 'package:flutter_application_2/models/single_movie.dart';
 import 'package:flutter_application_2/widgets/movie_section.dart';
@@ -246,7 +247,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 1:
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => const HomeScreen()),
+          MaterialPageRoute(builder: (_) => const SearchScreen()),
         );
         break;
 

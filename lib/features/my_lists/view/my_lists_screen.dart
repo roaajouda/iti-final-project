@@ -47,7 +47,6 @@ class _MyListsView extends StatelessWidget {
                   ),
                 ),
 
-                // Tab chips
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Row(
@@ -75,7 +74,6 @@ class _MyListsView extends StatelessWidget {
 
                 const SizedBox(height: 16),
 
-                // Content
                 Expanded(child: _buildBody(context, provider)),
               ],
             );
@@ -176,7 +174,6 @@ class _MyListsView extends StatelessWidget {
   }
 }
 
-// ── Tab chip ──────────────────────────────────────────────────────────────────
 
 class _TabChip extends StatelessWidget {
   final String label;
@@ -216,7 +213,6 @@ class _TabChip extends StatelessWidget {
   }
 }
 
-// ── Movie card ────────────────────────────────────────────────────────────────
 
 class _MovieCard extends StatelessWidget {
   final MovieRecord movie;
