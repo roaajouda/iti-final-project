@@ -65,7 +65,7 @@ class _FavouritesView extends StatelessWidget {
             ),
           ),
           Text(
-            'SQLite · $count movies',
+            '$count movies',
             style: const TextStyle(color: Colors.white38, fontSize: 12),
           ),
         ],
