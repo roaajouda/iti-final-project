@@ -5,6 +5,7 @@ import 'package:flutter_application_2/features/category/view/category_screen.dar
 import 'package:flutter_application_2/features/favourites/view/favourites_screen.dart';
 import 'package:flutter_application_2/features/home/provider/home_provider.dart';
 import 'package:flutter_application_2/features/movie_list/view/movie_list_screen.dart';
+import 'package:flutter_application_2/features/my_lists/view/my_lists_screen.dart';
 import 'package:flutter_application_2/models/movies.dart';
 import 'package:flutter_application_2/models/single_movie.dart';
 import 'package:flutter_application_2/widgets/movie_section.dart';
@@ -252,7 +253,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 2:
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => const HomeScreen()),
+          MaterialPageRoute(builder: (_) => const MyListsScreen()),
         );
         break;
 
@@ -294,7 +295,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.list_alt_outlined),
-          label: 'Lists',
+          label: 'My Lists',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.bookmark_border),
