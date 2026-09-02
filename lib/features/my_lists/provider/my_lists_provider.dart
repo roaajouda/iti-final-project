@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_2/core/models/movie.record.dart';
+import 'package:flutter_application_2/core/models/movie_record.dart';
 import '../controller/my_lists_controller.dart';
 
 enum MyListsState { idle, loading, error, success }

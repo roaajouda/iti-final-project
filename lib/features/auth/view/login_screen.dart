@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_2/features/auth/provider/auth_provider.dart';
+import 'package:flutter_application_2/features/auth/provider/auth_user_provider.dart';
 import 'package:flutter_application_2/features/home/view/home_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -17,7 +17,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
   bool _obscurePassword = true;
   Future<void> login() async {
-    AuthProvider provider = context.read<AuthProvider>();
+    AuthUserProvider provider = context.read<AuthUserProvider>();
     await provider.login(
       email:_emailController.text.trim(),
       password:_passwordController.text.trim(),
@@ -48,7 +48,7 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
-            child: Consumer<AuthProvider>(
+            child: Consumer<AuthUserProvider>(
               builder: (context, provider, child) {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,

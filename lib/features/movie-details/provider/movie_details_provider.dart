@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_2/core/models/movie.record.dart';
+import 'package:flutter_application_2/core/models/movie_record.dart';
 import '../../../core/exceptions/app_exception.dart';
 import '../../../core/models/movies.dart';
 import '../../../core/models/single_movie.dart';

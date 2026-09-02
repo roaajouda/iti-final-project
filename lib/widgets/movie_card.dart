@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_2/core/models/movie.record.dart';
+import 'package:flutter_application_2/core/models/movie_record.dart';
 import 'package:flutter_application_2/core/models/movies.dart';
 import 'package:flutter_application_2/core/navigation/app_navigation.dart';
 import 'package:flutter_application_2/core/theme/app_colors.dart';

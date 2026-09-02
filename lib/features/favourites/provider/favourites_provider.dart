@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_2/core/models/movie.record.dart';
+import 'package:flutter_application_2/core/models/movie_record.dart';
+
 import '../controller/favourites_controller.dart';
 
 enum FavouritesState { idle, loading, error, success }
@@ -19,7 +20,7 @@ class FavouritesProvider extends ChangeNotifier {
     try {
       movies = await _controller.getFavourites();
       state = FavouritesState.success;
-    } catch (_) {
+    } catch (e) {
       state = FavouritesState.error;
     }
 

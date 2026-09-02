@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_2/features/auth/provider/auth_provider.dart';
+import 'package:flutter_application_2/features/auth/provider/auth_user_provider.dart';
 import 'package:flutter_application_2/features/home/view/home_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -24,7 +24,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   bool _obscureConfirmPassword = true;
 
   Future<void> signUp() async {
-    final provider = context.read<AuthProvider>();
+    final provider = context.read<AuthUserProvider>();
 
     await provider.signUp(
       name: _nameController.text.trim(),
@@ -63,7 +63,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         child: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(24),
-            child: Consumer<AuthProvider>(
+            child: Consumer<AuthUserProvider>(
               builder: (context, provider, child) {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,

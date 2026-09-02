@@ -4,7 +4,7 @@ import '../controller/auth_controller.dart';
 
 enum AuthState { idle, loading, error, success }
 
-class AuthProvider extends ChangeNotifier {
+class AuthUserProvider extends ChangeNotifier {
   final AuthController _controller = AuthController();
 
   AuthState state = AuthState.idle;

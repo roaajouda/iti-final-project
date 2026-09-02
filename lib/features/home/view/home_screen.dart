@@ -3,7 +3,7 @@ import 'package:flutter_application_2/core/models/single_movie.dart';
 import 'package:flutter_application_2/core/navigation/app_navigation.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_application_2/core/theme/app_colors.dart';
-import 'package:flutter_application_2/features/auth/provider/auth_provider.dart';
+import 'package:flutter_application_2/features/auth/provider/auth_user_provider.dart';
 import 'package:flutter_application_2/features/home/provider/home_provider.dart';
 import 'package:flutter_application_2/widgets/app_bottom_nav_bar.dart';
 import 'package:flutter_application_2/widgets/app_search_bar.dart';
@@ -114,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildHeader(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-      child: Consumer<AuthProvider>(
+      child: Consumer<AuthUserProvider>(
         builder: (context, auth, _) {
           final name =
               auth.getUserName().isNotEmpty ? auth.getUserName() : 'User';
