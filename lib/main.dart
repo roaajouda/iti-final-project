@@ -2,7 +2,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/features/auth/provider/auth_provider.dart';
 import 'package:flutter_application_2/features/auth/view/login_screen.dart';
+import 'package:flutter_application_2/features/category/provider/category_provider.dart';
 import 'package:flutter_application_2/features/home/provider/home_provider.dart';
+import 'package:flutter_application_2/features/movie_list/provider/movie_list_provider.dart';
 import 'package:flutter_application_2/firebase_options.dart';
 import 'package:provider/provider.dart';
 
@@ -14,6 +16,8 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => HomeProvider()),
+        ChangeNotifierProvider(create: (_) => CategoryProvider()),
+        ChangeNotifierProvider(create: (_) => MovieListProvider()),
       ],
       child: const MyApp(),
     ),

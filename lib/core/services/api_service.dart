@@ -1,240 +1,113 @@
 import 'dart:convert';
-import 'dart:io';
-
+import 'package:http/http.dart' as http;
 import 'package:flutter_application_2/core/constants.dart';
 import 'package:flutter_application_2/core/exceptions/app_exception.dart';
 import 'package:flutter_application_2/models/movies.dart';
 import 'package:flutter_application_2/models/single_movie.dart';
-import 'package:http/http.dart' as http;
 
-class APIService {
-  static const String baseUrl = 'https://api.themoviedb.org/3';
+class ApiService {
+  static const String _baseUrl = 'https://api.themoviedb.org/3';
   static const String imageBaseUrl = 'https://image.tmdb.org/t/p/w500';
-  static const String _headers = 'Bearer ${Constants.tmdbToken}';
+  static const String _authHeader = 'Bearer ${Constants.tmdbToken}';
 
-  Future<Movies> getPopularMovies(int page) async {
+  Map<String, String> get _headers => {
+        'Authorization': _authHeader,
+        'accept': 'application/json',
+      };
+
+  // ─── Private helpers ───────────────────────────────────────────────
+
+  Future<Map<String, dynamic>> _get(String path,
+      [Map<String, String>? params]) async {
+    final uri = Uri.parse('$_baseUrl$path')
+        .replace(queryParameters: params);
     try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/movie/popular?page=$page'),
-        headers: {'Authorization': _headers},
-      );
-      return _parseMoviesResponse(response);
-    } on SocketException {
-      throw NetworkException();
-    } on FormatException {
-      throw InvalidResponseException();
-    }
-  }
-
-  Future<Movies> getNowPlayingMovies(int page) async {
-    try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/movie/now_playing?page=$page'),
-        headers: {'Authorization': _headers},
-      );
-      return _parseMoviesResponse(response);
-    } on SocketException {
-      throw NetworkException();
-    } on FormatException {
-      throw InvalidResponseException();
-    }
-  }
-
-  Future<dynamic> getTopRatedMovies(int page) async {
-    try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/movie/top_rated?page=$page'),
-        headers: {'Authorization': _headers},
-      );
-      return _parseMoviesResponse(response);
-    } on SocketException {
-      throw NetworkException();
-    } on FormatException {
-      throw InvalidResponseException();
-    }
-  }
-
-  Future<dynamic> getUpcomingMovies(int page) async {
-    try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/movie/upcoming?page=$page'),
-        headers: {'Authorization': _headers},
-      );
-      return _parseMoviesResponse(response);
-    } on SocketException {
-      throw NetworkException();
-    } on FormatException {
-      throw InvalidResponseException();
-    }
-  }
-
-  Future<Movies> getMoviesBasedOnCategory(int id, int page) async {
-    try {
-      final response = await http.get(
-        Uri.parse(
-          '$baseUrl/discover/movie'
-          '?with_genres=$id'
-          '&page=$page',
-        ),
-        headers: {'Authorization': _headers},
-      );
-
-      return _parseMoviesResponse(response);
-    } on SocketException {
-      throw NetworkException();
-    } on FormatException {
-      throw InvalidResponseException();
-    }
-  }
-
-  Future<Movies> getLatestMoviesBasedOnCategory(int id, int page) async {
-    try {
-      final response = await http.get(
-        Uri.parse(
-          '$baseUrl/discover/movie'
-          '?with_genres=$id'
-          '&sort_by=primary_release_date.desc'
-          '&page=$page',
-        ),
-        headers: {'Authorization': _headers},
-      );
-
-      return _parseMoviesResponse(response);
-    } on SocketException {
-      throw NetworkException();
-    } on FormatException {
-      throw InvalidResponseException();
-    }
-  }
-
-  Future<Movies> getMostPopularMoviesBasedOnCategory(int id, int page) async {
-    try {
-      final response = await http.get(
-        Uri.parse(
-          '$baseUrl/discover/movie'
-          '?with_genres=$id'
-          '&sort_by=popularity.desc'
-          '&page=$page',
-        ),
-        headers: {'Authorization': _headers},
-      );
-
-      return _parseMoviesResponse(response);
-    } on SocketException {
-      throw NetworkException();
-    } on FormatException {
-      throw InvalidResponseException();
-    }
-  }
-
-  Future<Movies> getTopRatedMoviesBasedOnCategory(int id, int page) async {
-    try {
-      final response = await http.get(
-        Uri.parse(
-          '$baseUrl/discover/movie'
-          '?with_genres=$id'
-          '&sort_by=vote_average.desc'
-          '&page=$page',
-        ),
-        headers: {'Authorization': _headers},
-      );
-
-      return _parseMoviesResponse(response);
-    } on SocketException {
-      throw NetworkException();
-    } on FormatException {
-      throw InvalidResponseException();
-    }
-  }
-
-  Future<Movies> getSearchMovies(String query, int page) async {
-    try {
-      final response = await http.get(
-        Uri.parse(
-          '$baseUrl/search/movie'
-          '?query=${Uri.encodeComponent(query)}'
-          '&page=$page',
-        ),
-        headers: {'Authorization': _headers},
-      );
-
-      return _parseMoviesResponse(response);
-    } on SocketException {
-      throw NetworkException();
-    } on FormatException {
-      throw InvalidResponseException();
-    }
-  }
-
-  Future<SingleMovie> getMovie(int id) async {
-    try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/movie/$id'),
-        headers: {'Authorization': _headers},
-      );
-
-      if (response.statusCode != 200) {
+      final response = await http.get(uri, headers: _headers);
+      if (response.statusCode == 200) {
+        return jsonDecode(response.body) as Map<String, dynamic>;
+      } else {
         throw ApiException();
       }
-
-      final data = jsonDecode(response.body);
-
-      if (data is! Map<String, dynamic>) {
-        throw InvalidResponseException();
-      }
-
-      return SingleMovie.fromJson(data);
-    } on SocketException {
+    } on ApiException {
+      rethrow;
+    } catch (_) {
       throw NetworkException();
-    } on FormatException {
-      throw InvalidResponseException();
     }
   }
 
-  Future<List<Genre>> getMovieGenres() async {
-    try {
-      final response = await http.get(
-        Uri.parse('$baseUrl/genre/movie/list'),
-        headers: {'Authorization': _headers},
-      );
-
-      if (response.statusCode != 200) {
-        throw ApiException();
-      }
-
-      final data = jsonDecode(response.body);
-
-      if (data is! Map<String, dynamic> || data['genres'] is! List) {
-        throw InvalidResponseException();
-      }
-
-      return List<Genre>.from(
-        data['genres'].map((genre) => Genre.fromJson(genre)),
-      );
-    } on SocketException {
-      throw NetworkException();
-    } on FormatException {
-      throw InvalidResponseException();
-    }
-  }
-
-  Movies _parseMoviesResponse(http.Response response) {
-    if (response.statusCode != 200) {
-      throw ApiException();
-    }
-
-    final data = jsonDecode(response.body);
-
-    if (data is! Map<String, dynamic> || data['results'] is! List) {
-      throw InvalidResponseException();
-    }
-
-    final movies = Movies.fromJson(data);
-
-    if (movies.results.isEmpty) {
+  Movies _parseMovies(Map<String, dynamic> json) {
+    final movies = Movies.fromJson(json);
+    if (movies.results == null || movies.results!.isEmpty) {
       throw EmptyMoviesException();
     }
-
     return movies;
+  }
+
+  Movies _parseSearchMovies(Map<String, dynamic> json) {
+    // Search can legitimately return empty — don't throw EmptyMoviesException
+    return Movies.fromJson(json);
+  }
+
+  // ─── Home ──────────────────────────────────────────────────────────
+
+  Future<Movies> getNowPlayingMovies({int page = 1}) async {
+    final json = await _get('/movie/now_playing', {'page': '$page'});
+    return _parseMovies(json);
+  }
+
+  Future<Movies> getPopularMovies({int page = 1}) async {
+    final json = await _get('/movie/popular', {'page': '$page'});
+    return _parseMovies(json);
+  }
+
+  Future<Movies> getTopRatedMovies({int page = 1}) async {
+    final json = await _get('/movie/top_rated', {'page': '$page'});
+    return _parseMovies(json);
+  }
+
+  Future<Movies> getUpcomingMovies({int page = 1}) async {
+    final json = await _get('/movie/upcoming', {'page': '$page'});
+    return _parseMovies(json);
+  }
+
+  // ─── Genres ────────────────────────────────────────────────────────
+
+  Future<List<Genre>> getMovieGenres() async {
+    final json = await _get('/genre/movie/list');
+    final list = json['genres'] as List?;
+    if (list == null) throw InvalidResponseException();
+    return list.map((e) => Genre.fromJson(e as Map<String, dynamic>)).toList();
+  }
+
+  // ─── Category ──────────────────────────────────────────────────────
+
+  Future<Movies> getMoviesByGenre({
+    required int genreId,
+    int page = 1,
+    String sortBy = 'popularity.desc',
+  }) async {
+    final json = await _get('/discover/movie', {
+      'with_genres': '$genreId',
+      'page': '$page',
+      'sort_by': sortBy,
+    });
+    return _parseMovies(json);
+  }
+
+  // ─── Search ────────────────────────────────────────────────────────
+
+  Future<Movies> searchMovies(String query, {int page = 1}) async {
+    final json = await _get('/search/movie', {
+      'query': query,
+      'page': '$page',
+    });
+    return _parseSearchMovies(json);
+  }
+
+  // ─── Single Movie ──────────────────────────────────────────────────
+
+  Future<SingleMovie> getMovieDetails(int movieId) async {
+    final json = await _get('/movie/$movieId');
+    return SingleMovie.fromJson(json);
   }
 }
