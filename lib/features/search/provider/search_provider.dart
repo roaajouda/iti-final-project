@@ -2,26 +2,30 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../../models/movies.dart';
 import '../controller/search_controller.dart';
+
 enum SearchState { idle, loading, error, success }
 
 class SearchProvider extends ChangeNotifier {
   final SearchScreenController _controller = SearchScreenController();
+
   SearchState state = SearchState.idle;
   List<Result> results = [];
+  List<String> trendingKeywords = [];
   String _query = '';
   Timer? _debounce;
 
   String get query => _query;
   bool get hasQuery => _query.trim().isNotEmpty;
 
-  static const List<String> trendingKeywords = [
-    'Dune',
-    'Drama',
-    'Animation',
-    'Batman',
-    '2023',
-    'Thriller',
-  ];
+  SearchProvider() {
+    _loadTrendingKeywords();
+  }
+
+
+  Future<void> _loadTrendingKeywords() async {
+    trendingKeywords = await _controller.getTrendingKeywords();
+    notifyListeners();
+  }
 
 
   void onQueryChanged(String value) {

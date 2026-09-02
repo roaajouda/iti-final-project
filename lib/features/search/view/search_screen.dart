@@ -150,7 +150,7 @@ class _SearchViewState extends State<_SearchView> {
           Wrap(
             spacing: 8,
             runSpacing: 8,
-            children: SearchProvider.trendingKeywords
+            children: provider.trendingKeywords
                 .map(
                   (kw) => GestureDetector(
                     onTap: () {

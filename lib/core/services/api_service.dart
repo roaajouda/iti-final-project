@@ -16,7 +16,6 @@ class APIService {
     'accept': 'application/json',
   };
 
-
   Future<Map<String, dynamic>> _get(
     String path, [
     Map<String, String>? params,
@@ -48,7 +47,6 @@ class APIService {
     return Movies.fromJson(json);
   }
 
-
   Future<Movies> getNowPlayingMovies({int page = 1}) async {
     final json = await _get('/movie/now_playing', {'page': '$page'});
     return _parseMovies(json);
@@ -69,14 +67,12 @@ class APIService {
     return _parseMovies(json);
   }
 
-
   Future<List<Genre>> getMovieGenres() async {
     final json = await _get('/genre/movie/list');
     final list = json['genres'] as List?;
     if (list == null) throw InvalidResponseException();
     return list.map((e) => Genre.fromJson(e as Map<String, dynamic>)).toList();
   }
-
 
   Future<Movies> getMoviesByGenre({
     required int genreId,
@@ -91,19 +87,23 @@ class APIService {
     return _parseMovies(json);
   }
 
-
   Future<Movies> searchMovies(String query, {int page = 1}) async {
     final json = await _get('/search/movie', {'query': query, 'page': '$page'});
     return _parseSearchMovies(json);
   }
 
-
   Future<SingleMovie> getMovieDetails(int movieId) async {
     final json = await _get('/movie/$movieId');
     return SingleMovie.fromJson(json);
   }
+
   Future<Movies> getSimilarMovies(int movieId, {int page = 1}) async {
     final json = await _get('/movie/$movieId/similar', {'page': '$page'});
+    return Movies.fromJson(json);
+  }
+
+  Future<Movies> getTrendingMovies({String timeWindow = 'week'}) async {
+    final json = await _get('/trending/movie/$timeWindow');
     return Movies.fromJson(json);
   }
 }
