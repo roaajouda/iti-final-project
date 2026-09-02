@@ -23,7 +23,6 @@ class MovieListScreen extends StatelessWidget {
   }
 }
 
-// ─── Private View ────────────────────────────────────────────────────────────
 
 class _MovieListView extends StatelessWidget {
   final String title;
@@ -56,7 +55,6 @@ class _MovieListView extends StatelessWidget {
             );
           }
 
-          // ── First load failed
           if (provider.state == MovieListState.error &&
               provider.movies.isEmpty) {
             return Center(
@@ -82,10 +80,9 @@ class _MovieListView extends StatelessWidget {
             );
           }
 
-          // ── Movie list + footer
           return ListView.builder(
             padding: const EdgeInsets.only(top: 8, bottom: 32),
-            itemCount: provider.movies.length + 1, // +1 for footer
+            itemCount: provider.movies.length + 1, 
             itemBuilder: (context, index) {
               if (index < provider.movies.length) {
                 return MovieListItem(movie: provider.movies[index]);
@@ -99,7 +96,6 @@ class _MovieListView extends StatelessWidget {
   }
 
   Widget _buildFooter(BuildContext context, MovieListProvider provider) {
-    // Loading next page
     if (provider.state == MovieListState.loadingMore) {
       return const Padding(
         padding: EdgeInsets.symmetric(vertical: 24),
@@ -109,7 +105,6 @@ class _MovieListView extends StatelessWidget {
       );
     }
 
-    // Error while loading more
     if (provider.state == MovieListState.error &&
         provider.movies.isNotEmpty) {
       return Padding(
@@ -135,7 +130,6 @@ class _MovieListView extends StatelessWidget {
       );
     }
 
-    // No more pages
     if (!provider.hasMore) {
       return const Padding(
         padding: EdgeInsets.symmetric(vertical: 24),
@@ -148,7 +142,6 @@ class _MovieListView extends StatelessWidget {
       );
     }
 
-    // Load More button
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 40),
       child: ElevatedButton(

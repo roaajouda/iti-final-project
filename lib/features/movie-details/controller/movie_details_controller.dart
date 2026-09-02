@@ -12,16 +12,8 @@ class MovieDetailsController {
 
   MovieDetailsController({required this.movieId});
 
-  // ── API ──────────────────────────────────────────────────────────────────
 
   Future<SingleMovie> getMovieDetails() => _apiService.getMovieDetails(movieId);
-
-  /// NOTE: add this method to ApiService if not already present:
-  ///
-  ///   Future<Movies> getSimilarMovies(int movieId, {int page = 1}) async {
-  ///     final json = await _get('/movie/$movieId/similar', {'page': '$page'});
-  ///     return Movies.fromJson(json);
-  ///   }
   Future<List<Result>> getSimilarMovies() async {
     try {
       final movies = await _apiService.getSimilarMovies(movieId);
@@ -31,7 +23,6 @@ class MovieDetailsController {
     }
   }
 
-  // ── Favourites ───────────────────────────────────────────────────────────
 
   Future<bool> isFavourite() => _db.isFavourite(movieId);
 
@@ -39,7 +30,6 @@ class MovieDetailsController {
 
   Future<void> removeFavourite() => _db.removeFavourite(movieId);
 
-  // ── Watch Now ────────────────────────────────────────────────────────────
 
   Future<bool> isWatchNow() => _db.isWatchNow(movieId);
 
@@ -47,7 +37,6 @@ class MovieDetailsController {
 
   Future<void> removeWatchNow() => _db.removeWatchNow(movieId);
 
-  // ── Watch Later ──────────────────────────────────────────────────────────
 
   Future<bool> isWatchLater() => _db.isWatchLater(movieId);
 
@@ -55,7 +44,6 @@ class MovieDetailsController {
 
   Future<void> removeWatchLater() => _db.removeWatchLater(movieId);
 
-  // ── Watched ──────────────────────────────────────────────────────────────
 
   Future<bool> isWatched() => _db.isWatched(movieId);
 

@@ -13,7 +13,6 @@ class AuthProvider extends ChangeNotifier {
 
   String get userName => _userName;
 
-  // ── Login ─────────────────────────────────────────────────────────────────
 
   Future<void> login({
     required String email,
@@ -38,7 +37,6 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ── Sign Up ───────────────────────────────────────────────────────────────
 
   Future<void> signUp({
     required String name,
@@ -70,7 +68,6 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ── Logout ────────────────────────────────────────────────────────────────
 
   Future<void> logout() async {
     state = AuthState.loading;
@@ -82,7 +79,6 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ── Helpers ───────────────────────────────────────────────────────────────
 
   Future<void> loadUser() async {
     _userName = await _controller.getUserName();

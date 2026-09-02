@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_2/features/auth/provider/auth_provider.dart';
 import 'package:flutter_application_2/features/auth/view/login_screen.dart';
 import 'package:flutter_application_2/features/category/provider/category_provider.dart';
+import 'package:flutter_application_2/features/favourites/provider/favourites_provider.dart';
 import 'package:flutter_application_2/features/home/provider/home_provider.dart';
 import 'package:flutter_application_2/firebase_options.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +17,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProvider(create: (_) => HomeProvider()),
         ChangeNotifierProvider(create: (_) => CategoryProvider()),
+        ChangeNotifierProvider(create: (_) => FavouritesProvider()),
       ],
       child: const MyApp(),
     ),

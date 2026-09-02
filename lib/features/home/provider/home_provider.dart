@@ -48,10 +48,6 @@ class HomeProvider extends ChangeNotifier {
 
     notifyListeners();
   }
-
-  // ── Fetchers used by MovieListScreen ─────────────────────────────
-  // Screen → Provider → Controller → ApiService (never skip a layer)
-
   Future<Movies> fetchPopularPage(int page) =>
       _controller.getPopularMovies(page: page);
 

@@ -42,7 +42,6 @@ class DatabaseService {
     }
   }
 
-  // ── Generic helpers ─────────────────────────────────────────────
 
   Future<void> _insert(String table, MovieRecord movie) async {
     final db = await database;
@@ -82,7 +81,6 @@ class DatabaseService {
     return rows.map(MovieRecord.fromMap).toList();
   }
 
-  // ── Favourites ──────────────────────────────────────────────────
 
   Future<void> addFavourite(MovieRecord movie) => _insert('favourites', movie);
 
@@ -92,7 +90,6 @@ class DatabaseService {
 
   Future<List<MovieRecord>> getFavourites() => _getAll('favourites');
 
-  // ── Watch Now ───────────────────────────────────────────────────
 
   Future<void> addWatchNow(MovieRecord movie) => _insert('watch_now', movie);
 
@@ -102,7 +99,6 @@ class DatabaseService {
 
   Future<List<MovieRecord>> getWatchNow() => _getAll('watch_now');
 
-  // ── Watch Later ─────────────────────────────────────────────────
 
   Future<void> addWatchLater(MovieRecord movie) =>
       _insert('watch_later', movie);
@@ -113,7 +109,6 @@ class DatabaseService {
 
   Future<List<MovieRecord>> getWatchLater() => _getAll('watch_later');
 
-  // ── Watched ─────────────────────────────────────────────────────
 
   Future<void> addWatched(MovieRecord movie) => _insert('watched', movie);
 

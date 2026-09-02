@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_2/features/auth/provider/auth_provider.dart';
 import 'package:flutter_application_2/features/category/provider/category_provider.dart';
 import 'package:flutter_application_2/features/category/view/category_screen.dart';
+import 'package:flutter_application_2/features/favourites/view/favourites_screen.dart';
 import 'package:flutter_application_2/features/home/provider/home_provider.dart';
 import 'package:flutter_application_2/features/movie_list/view/movie_list_screen.dart';
 import 'package:flutter_application_2/models/movies.dart';
@@ -26,7 +27,6 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
-  // ── Navigation helpers ──────────────────────────────────────────
 
   void _goToMovieList(String title, Future<Movies> Function(int page) fetcher) {
     Navigator.push(
@@ -49,7 +49,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // ── Build ───────────────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
@@ -58,14 +57,12 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: _buildBottomNavBar(),
       body: Consumer<HomeProvider>(
         builder: (context, provider, _) {
-          // Loading
           if (provider.state == HomeState.loading) {
             return const Center(
               child: CircularProgressIndicator(color: Color(0xffffc107)),
             );
           }
 
-          // Error
           if (provider.state == HomeState.error) {
             return Center(
               child: Column(
@@ -90,7 +87,6 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           }
 
-          // Success
           return SafeArea(
             child: SingleChildScrollView(
               child: Column(
@@ -132,7 +128,6 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // ── Private widgets ─────────────────────────────────────────────
 
   Widget _buildHeader() {
     return Padding(
@@ -187,7 +182,6 @@ class _HomeScreenState extends State<HomeScreen> {
     return GestureDetector(
       onTap: () {},
       child: AbsorbPointer(
-        // prevents keyboard from opening on home screen
         child: Container(
           height: 48,
           padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -265,7 +259,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 3:
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (_) => const HomeScreen()),
+          MaterialPageRoute(builder: (_) => const FavouritesScreen()),
         );
         break;
 
@@ -304,7 +298,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.bookmark_border),
-          label: 'Saved',
+          label: 'Favourites',
         ),
         BottomNavigationBarItem(
           icon: Icon(Icons.person_outline),

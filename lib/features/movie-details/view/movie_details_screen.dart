@@ -18,7 +18,6 @@ class MovieDetailsScreen extends StatelessWidget {
   }
 }
 
-// ─────────────────────────────────────────────────────────────────────────────
 
 class _MovieDetailsView extends StatelessWidget {
   const _MovieDetailsView();
@@ -99,7 +98,6 @@ class _MovieDetailsView extends StatelessWidget {
     );
   }
 
-  // ── Sliver App Bar ────────────────────────────────────────────────────────
 
   SliverAppBar _buildAppBar(
     BuildContext context,
@@ -115,7 +113,6 @@ class _MovieDetailsView extends StatelessWidget {
         onPressed: () => Navigator.of(context).pop(),
       ),
       actions: [
-        // Favourite heart button — yellow when active, outline when not
         Padding(
           padding: const EdgeInsets.only(right: 8),
           child: Consumer<MovieDetailsProvider>(
@@ -134,7 +131,6 @@ class _MovieDetailsView extends StatelessWidget {
         background: Stack(
           fit: StackFit.expand,
           children: [
-            // Backdrop image
             if (movie.backdropPath != null)
               Image.network(
                 '$_imgBase/w1280${movie.backdropPath}',
@@ -144,7 +140,6 @@ class _MovieDetailsView extends StatelessWidget {
             else
               Container(color: _surface),
 
-            // Gradient overlay (bottom-to-top fade to dark)
             const DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -165,7 +160,6 @@ class _MovieDetailsView extends StatelessWidget {
     );
   }
 
-  // ── Poster + title row ────────────────────────────────────────────────────
 
   Widget _buildInfo(SingleMovie movie) {
     final year = movie.releaseDate?.year.toString() ?? '—';
@@ -246,7 +240,6 @@ class _MovieDetailsView extends StatelessWidget {
         child: const Icon(Icons.movie, color: Colors.white24, size: 40),
       );
 
-  // ── Genre chips ───────────────────────────────────────────────────────────
 
   Widget _buildGenreChips(List<Genre> genres) {
     return Wrap(
@@ -270,7 +263,6 @@ class _MovieDetailsView extends StatelessWidget {
     );
   }
 
-  // ── 3 Action buttons ──────────────────────────────────────────────────────
 
   Widget _buildActionButtons(MovieDetailsProvider provider) {
     return Row(
@@ -307,7 +299,6 @@ class _MovieDetailsView extends StatelessWidget {
     );
   }
 
-  // ── Overview ──────────────────────────────────────────────────────────────
 
   Widget _buildOverview(SingleMovie movie) {
     final text = (movie.overview?.isNotEmpty == true)
@@ -319,7 +310,6 @@ class _MovieDetailsView extends StatelessWidget {
     );
   }
 
-  // ── Similar movies ────────────────────────────────────────────────────────
 
   Widget _buildSimilarMovies(BuildContext context, List<Result> movies) {
     return SizedBox(
@@ -364,7 +354,6 @@ class _MovieDetailsView extends StatelessWidget {
         child: const Icon(Icons.movie, color: Colors.white24, size: 32),
       );
 
-  // ── Section wrapper ───────────────────────────────────────────────────────
 
   Widget _buildSection(String title, Widget content) {
     return Column(
@@ -385,10 +374,6 @@ class _MovieDetailsView extends StatelessWidget {
     );
   }
 }
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Reusable toggle action button
-// ─────────────────────────────────────────────────────────────────────────────
 
 class _ActionButton extends StatelessWidget {
   final IconData icon;

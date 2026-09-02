@@ -44,7 +44,7 @@ class _FavouritesView extends StatelessWidget {
     );
   }
 
-  // ── Header ────────────────────────────────────────────────────────────────
+
 
   Widget _buildHeader(int count) {
     return Padding(
@@ -69,8 +69,6 @@ class _FavouritesView extends StatelessWidget {
     );
   }
 
-  // ── Body ──────────────────────────────────────────────────────────────────
-
   Widget _buildBody(BuildContext context, FavouritesProvider provider) {
     if (provider.state == FavouritesState.loading) {
       return const Center(
@@ -85,7 +83,6 @@ class _FavouritesView extends StatelessWidget {
     return _buildGrid(context, provider.movies);
   }
 
-  // ── Empty state ───────────────────────────────────────────────────────────
 
   Widget _buildEmptyState(BuildContext context) {
     return Center(
@@ -94,7 +91,6 @@ class _FavouritesView extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Icon box
             Container(
               width: 72,
               height: 72,
@@ -145,7 +141,6 @@ class _FavouritesView extends StatelessWidget {
     );
   }
 
-  // ── Grid ──────────────────────────────────────────────────────────────────
 
   Widget _buildGrid(BuildContext context, List<MovieRecord> movies) {
     return GridView.builder(
@@ -163,7 +158,6 @@ class _FavouritesView extends StatelessWidget {
   }
 }
 
-// ── Movie card ────────────────────────────────────────────────────────────────
 
 class _MovieCard extends StatelessWidget {
   final MovieRecord movie;

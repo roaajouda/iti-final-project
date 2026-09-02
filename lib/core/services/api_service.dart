@@ -16,7 +16,6 @@ class APIService {
     'accept': 'application/json',
   };
 
-  // ─── Private helpers ───────────────────────────────────────────────
 
   Future<Map<String, dynamic>> _get(
     String path, [
@@ -46,11 +45,9 @@ class APIService {
   }
 
   Movies _parseSearchMovies(Map<String, dynamic> json) {
-    // Search can legitimately return empty — don't throw EmptyMoviesException
     return Movies.fromJson(json);
   }
 
-  // ─── Home ──────────────────────────────────────────────────────────
 
   Future<Movies> getNowPlayingMovies({int page = 1}) async {
     final json = await _get('/movie/now_playing', {'page': '$page'});
@@ -72,7 +69,6 @@ class APIService {
     return _parseMovies(json);
   }
 
-  // ─── Genres ────────────────────────────────────────────────────────
 
   Future<List<Genre>> getMovieGenres() async {
     final json = await _get('/genre/movie/list');
@@ -81,7 +77,6 @@ class APIService {
     return list.map((e) => Genre.fromJson(e as Map<String, dynamic>)).toList();
   }
 
-  // ─── Category ──────────────────────────────────────────────────────
 
   Future<Movies> getMoviesByGenre({
     required int genreId,
@@ -96,24 +91,17 @@ class APIService {
     return _parseMovies(json);
   }
 
-  // ─── Search ────────────────────────────────────────────────────────
 
   Future<Movies> searchMovies(String query, {int page = 1}) async {
     final json = await _get('/search/movie', {'query': query, 'page': '$page'});
     return _parseSearchMovies(json);
   }
 
-  // ─── Single Movie ──────────────────────────────────────────────────
 
   Future<SingleMovie> getMovieDetails(int movieId) async {
     final json = await _get('/movie/$movieId');
     return SingleMovie.fromJson(json);
   }
-  // ─────────────────────────────────────────────────────────────────────────────
-  // ADD THIS METHOD to lib/core/services/api_service.dart
-  // (paste it right after getMovieDetails)
-  // ─────────────────────────────────────────────────────────────────────────────
-
   Future<Movies> getSimilarMovies(int movieId, {int page = 1}) async {
     final json = await _get('/movie/$movieId/similar', {'page': '$page'});
     return Movies.fromJson(json);

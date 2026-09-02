@@ -26,7 +26,6 @@ class MovieListItem extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Poster
             ClipRRect(
               borderRadius: BorderRadius.circular(8),
               child: movie.posterPath != null
@@ -40,12 +39,10 @@ class MovieListItem extends StatelessWidget {
                   : _placeholder(),
             ),
             const SizedBox(width: 12),
-            // Info
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Title
                   Text(
                     movie.title ?? 'Unknown',
                     style: const TextStyle(
@@ -57,7 +54,6 @@ class MovieListItem extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 6),
-                  // Year + Genre chip
                   Row(
                     children: [
                       if (movie.releaseDate != null)
@@ -89,7 +85,6 @@ class MovieListItem extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 6),
-                  // Rating
                   Row(
                     children: [
                       const Icon(
@@ -109,7 +104,6 @@ class MovieListItem extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 6),
-                  // Overview
                   Text(
                     movie.overview ?? '',
                     style: const TextStyle(

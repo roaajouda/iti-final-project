@@ -86,8 +86,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     ),
 
                     const SizedBox(height: 40),
-
-                    // Name
                     TextField(
                       controller: _nameController,
                       keyboardType: TextInputType.name,
@@ -100,7 +98,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                     const SizedBox(height: 16),
 
-                    // Email
                     TextField(
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
@@ -113,7 +110,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                     const SizedBox(height: 16),
 
-                    // Password
                     TextField(
                       controller: _passwordController,
                       obscureText: _obscurePassword,
@@ -138,7 +134,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
                     const SizedBox(height: 16),
 
-                    // Confirm Password
                     TextField(
                       controller: _confirmPasswordController,
                       obscureText: _obscureConfirmPassword,

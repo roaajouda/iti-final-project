@@ -19,13 +19,11 @@ class MovieDetailsProvider extends ChangeNotifier {
   List<Result> similarMovies = [];
   String errorMessage = '';
 
-  // SQLite toggle states
   bool isFavourite = false;
   bool isWatchNow = false;
   bool isWatchLater = false;
   bool isWatched = false;
 
-  // ── Load ─────────────────────────────────────────────────────────────────
 
   Future<void> loadDetails() async {
     state = MovieDetailsState.loading;
@@ -60,7 +58,6 @@ class MovieDetailsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ── Toggle helpers ────────────────────────────────────────────────────────
 
   MovieRecord get _record => MovieRecord.fromSingleMovie(movie!);
 

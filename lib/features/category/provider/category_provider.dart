@@ -47,9 +47,6 @@ class CategoryProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  // ── Fetchers for MovieListScreen ──────────────────────────────────
-  // Screen calls these — they go through controller → service
-
   Future<Movies> fetchMostPopularPage(int genreId, int page) =>
       _controller.getMostPopular(genreId, page: page);
 
