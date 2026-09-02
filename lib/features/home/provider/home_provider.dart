@@ -4,73 +4,60 @@ import 'package:flutter_application_2/features/home/controller/home_controller.d
 import 'package:flutter_application_2/models/movies.dart';
 import 'package:flutter_application_2/models/single_movie.dart';
 
+enum HomeState { idle, loading, error, success }
+
 class HomeProvider extends ChangeNotifier {
   final HomeController _controller = HomeController();
 
+  HomeState state = HomeState.idle;
   String? errorMessage;
-  MovieState state = MovieState.idle;
 
   Movies? nowPlayingMovies;
   Movies? popularMovies;
   Movies? topRatedMovies;
   Movies? upcomingMovies;
-
   List<Genre> genres = [];
 
-  Future<void> getHomeMovies() async {
-    state = MovieState.loading;
+  Future<void> loadHome() async {
+    state = HomeState.loading;
     errorMessage = null;
-
     notifyListeners();
 
     try {
-      nowPlayingMovies = await _controller.getNowPlayingMovies(1);
-      popularMovies = await _controller.getPopularMovies(1);
-      topRatedMovies = await _controller.getTopRatedMovies(1);
-      upcomingMovies = await _controller.getUpcomingMovies(1);
+      final results = await Future.wait([
+        _controller.getNowPlayingMovies(),
+        _controller.getPopularMovies(),
+        _controller.getTopRatedMovies(),
+        _controller.getUpcomingMovies(),
+        _controller.getMovieGenres(),
+      ]);
 
-      state = MovieState.success;
+      nowPlayingMovies = results[0] as Movies;
+      popularMovies    = results[1] as Movies;
+      topRatedMovies   = results[2] as Movies;
+      upcomingMovies   = results[3] as Movies;
+      genres           = results[4] as List<Genre>;
+      state = HomeState.success;
     } on AppException catch (e) {
       errorMessage = e.message;
-      state = MovieState.error;
-    } catch (e) {
-      errorMessage = 'Something went wrong.';
-      state = MovieState.error;
+      state = HomeState.error;
+    } catch (_) {
+      errorMessage = 'Something went wrong. Please try again.';
+      state = HomeState.error;
     }
 
     notifyListeners();
   }
 
-  Future<void> getGenres() async {
-    errorMessage = null;
+  // ── Fetchers used by MovieListScreen ─────────────────────────────
+  // Screen → Provider → Controller → ApiService (never skip a layer)
 
-    try {
-      genres = await _controller.getMovieGenres();
+  Future<Movies> fetchPopularPage(int page) =>
+      _controller.getPopularMovies(page: page);
 
-      notifyListeners();
-    } on AppException catch (e) {
-      errorMessage = e.message;
-      notifyListeners();
-    } catch (e) {
-      errorMessage = 'Something went wrong.';
-      notifyListeners();
-    }
-  }
+  Future<Movies> fetchTopRatedPage(int page) =>
+      _controller.getTopRatedMovies(page: page);
 
-  Future<Movies?> searchMovies(String query, int page) async {
-    errorMessage = null;
-
-    try {
-      return await _controller.getSearchMovies(query, page);
-    } on AppException catch (e) {
-      errorMessage = e.message;
-    } catch (e) {
-      errorMessage = 'Something went wrong.';
-    }
-
-    notifyListeners();
-    return null;
-  }
+  Future<Movies> fetchUpcomingPage(int page) =>
+      _controller.getUpcomingMovies(page: page);
 }
-
-enum MovieState { idle, loading, error, success }

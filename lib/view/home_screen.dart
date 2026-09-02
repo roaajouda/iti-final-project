@@ -3,6 +3,9 @@ import 'package:flutter_application_2/features/auth/provider/auth_provider.dart'
 import 'package:flutter_application_2/features/category/provider/category_provider.dart';
 import 'package:flutter_application_2/features/category/view/category_screen.dart';
 import 'package:flutter_application_2/features/home/provider/home_provider.dart';
+import 'package:flutter_application_2/features/movie_list/view/movie_list_screen.dart';
+import 'package:flutter_application_2/models/movies.dart';
+import 'package:flutter_application_2/models/single_movie.dart';
 import 'package:flutter_application_2/widgets/movie_section.dart';
 import 'package:flutter_application_2/widgets/now_playing_banner.dart';
 import 'package:provider/provider.dart';
@@ -19,132 +22,167 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<HomeProvider>().getHomeMovies();
-      context.read<HomeProvider>().getGenres();
-      context.read<AuthProvider>().loadUser();
+      context.read<HomeProvider>().loadHome();
     });
   }
+
+  // ── Navigation helpers ──────────────────────────────────────────
+
+  void _goToMovieList(String title, Future<Movies> Function(int page) fetcher) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MovieListScreen(title: title, fetcher: fetcher),
+      ),
+    );
+  }
+
+  void _goToCategory(Genre genre) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ChangeNotifierProvider(
+          create: (_) => CategoryProvider(),
+          child: CategoryScreen(genre: genre),
+        ),
+      ),
+    );
+  }
+
+  // ── Build ───────────────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xff0B0A0A),
-      body: SafeArea(
-        child: Consumer2<HomeProvider, AuthProvider>(
-          builder: (context, provider, authProvider, _) {
-            if (provider.state == MovieState.loading) {
-              return const Center(child: CircularProgressIndicator());
-            }
+      backgroundColor: Colors.black,
+      bottomNavigationBar: _buildBottomNavBar(),
+      body: Consumer<HomeProvider>(
+        builder: (context, provider, _) {
+          // Loading
+          if (provider.state == HomeState.loading) {
+            return const Center(
+              child: CircularProgressIndicator(color: Color(0xffffc107)),
+            );
+          }
 
-            if (provider.state == MovieState.error) {
-              return Center(
-                child: Text(
-                  provider.errorMessage ?? 'Something went wrong.',
-                  style: const TextStyle(color: Colors.white),
-                ),
-              );
-            }
-
-            return SingleChildScrollView(
+          // Error
+          if (provider.state == HomeState.error) {
+            return Center(
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _buildHeader(authProvider),
-                  _buildSearchBar(),
-                  const SizedBox(height: 18),
-                  _buildCategories(provider),
-                  const SizedBox(height: 20),
-
-                  NowPlayingBanner(
-                    movies: provider.nowPlayingMovies,
-                    onTap: (movie) {
-                      // Navigator.push to MovieDetailsScreen(movieId: movie.id)
-                    },
+                  Text(
+                    provider.errorMessage ?? 'Something went wrong.',
+                    style: const TextStyle(color: Colors.white),
+                    textAlign: TextAlign.center,
                   ),
-
-                  const SizedBox(height: 25),
-
-                  MovieSection(
-                    title: 'Popular',
-                    movies: provider.popularMovies,
-                    onMovieTap: (movie) {
-                      // Navigator.push to MovieDetailsScreen(movieId: movie.id)
-                    },
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xffffc107),
+                      foregroundColor: Colors.black,
+                    ),
+                    onPressed: provider.loadHome,
+                    child: const Text('Retry'),
                   ),
-
-                  const SizedBox(height: 25),
-
-                  MovieSection(
-                    title: 'Top Rated',
-                    movies: provider.topRatedMovies,
-                    onMovieTap: (movie) {
-                      // Navigator.push to MovieDetailsScreen(movieId: movie.id)
-                    },
-                  ),
-
-                  const SizedBox(height: 25),
-
-                  MovieSection(
-                    title: 'Upcoming',
-                    movies: provider.upcomingMovies,
-                    onMovieTap: (movie) {
-                      // Navigator.push to MovieDetailsScreen(movieId: movie.id)
-                    },
-                  ),
-
-                  const SizedBox(height: 20),
                 ],
               ),
             );
-          },
-        ),
+          }
+
+          // Success
+          return SafeArea(
+            child: SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildHeader(),
+                  _buildSearchBar(),
+                  const SizedBox(height: 16),
+                  _buildGenreChips(provider.genres),
+                  const SizedBox(height: 8),
+                  NowPlayingBanner(movies: provider.nowPlayingMovies),
+                  MovieSection(
+                    title: 'Most Popular',
+                    movies: provider.popularMovies,
+                    onSeeAll: () => _goToMovieList(
+                      'Most Popular',
+                      provider.fetchPopularPage,
+                    ),
+                  ),
+                  MovieSection(
+                    title: 'Top Rated',
+                    movies: provider.topRatedMovies,
+                    onSeeAll: () => _goToMovieList(
+                      'Top Rated',
+                      provider.fetchTopRatedPage,
+                    ),
+                  ),
+                  MovieSection(
+                    title: 'Upcoming',
+                    movies: provider.upcomingMovies,
+                    onSeeAll: () => _goToMovieList(
+                      'Upcoming',
+                      provider.fetchUpcomingPage,
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                ],
+              ),
+            ),
+          );
+        },
       ),
-      bottomNavigationBar: _buildBottomNavigationBar(),
     );
   }
 
-  Widget _buildHeader(AuthProvider authProvider) {
-    final name = authProvider.userName ?? 'User';
+  // ── Private widgets ─────────────────────────────────────────────
+
+  Widget _buildHeader() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 18, 16, 0),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'GOOD EVENING',
-                  style: TextStyle(
-                      color: Color(0xff9E9E9E), fontSize: 10, letterSpacing: 2),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  name,
-                  style: const TextStyle(
+      padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      child: Consumer<AuthProvider>(
+        builder: (context, auth, _) {
+          final name = auth.getUserName() ?? 'User';
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'What do you want',
+                    style: TextStyle(
                       color: Colors.white,
-                      fontSize: 21,
-                      fontWeight: FontWeight.bold),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Text(
+                    'to watch today?',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              CircleAvatar(
+                radius: 22,
+                backgroundColor: const Color(0xffffc107),
+                child: Text(
+                  name.isNotEmpty ? name[0].toUpperCase() : 'U',
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                  ),
                 ),
-              ],
-            ),
-          ),
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: const Color(0xff1A1818),
-              border: Border.all(color: const Color(0xff353232)),
-            ),
-            alignment: Alignment.center,
-            child: Text(
-              name.isNotEmpty ? name[0].toUpperCase() : 'U',
-              style: const TextStyle(
-                  color: Color(0xffffc107), fontWeight: FontWeight.bold),
-            ),
-          ),
-        ],
+              ),
+            ],
+          );
+        },
       ),
     );
   }
@@ -153,6 +191,10 @@ class _HomeScreenState extends State<HomeScreen> {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 18, 16, 0),
       child: TextField(
+        readOnly: true,
+        onTap: () {
+          // Navigate to SearchScreen — add later
+        },
         style: const TextStyle(color: Colors.white),
         decoration: InputDecoration(
           hintText: 'Search movies',
@@ -178,40 +220,31 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildCategories(HomeProvider provider) {
+  Widget _buildGenreChips(List<Genre> genres) {
+    if (genres.isEmpty) return const SizedBox.shrink();
+
     return SizedBox(
-      height: 38,
-      child: ListView.builder(
+      height: 36,
+      child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        itemCount: provider.genres.length,
+        itemCount: genres.length,
+        separatorBuilder: (_, __) => const SizedBox(width: 8),
         itemBuilder: (context, index) {
-          final genre = provider.genres[index];
+          final genre = genres[index];
           return GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => ChangeNotifierProvider(
-                    create: (_) => CategoryProvider(),
-                    child: CategoryScreen(genre: genre),
-                  ),
-                ),
-              );
-            },
+            onTap: () => _goToCategory(genre),
             child: Container(
-              margin: const EdgeInsets.only(right: 10),
               padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: const Color(0xff191717),
+                color: const Color(0xff1a1a1a),
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(color: const Color(0xff302D2D)),
               ),
               child: Text(
-                genre.name,
-                style:
-                    const TextStyle(color: Colors.white70, fontSize: 12),
+                genre.name ?? '',
+                style: const TextStyle(color: Colors.white, fontSize: 12),
               ),
             ),
           );
@@ -220,7 +253,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildBottomNavigationBar() {
+  Widget _buildBottomNavBar() {
     return BottomNavigationBar(
       backgroundColor: const Color(0xff0F0E0E),
       type: BottomNavigationBarType.fixed,
@@ -229,19 +262,31 @@ class _HomeScreenState extends State<HomeScreen> {
       unselectedItemColor: const Color(0xff777272),
       selectedFontSize: 9,
       unselectedFontSize: 9,
+      onTap: (index) {
+        // Wire up other tabs when screens are ready
+      },
       items: const [
         BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: 'Home'),
+          icon: Icon(Icons.home_outlined),
+          activeIcon: Icon(Icons.home),
+          label: 'Home',
+        ),
         BottomNavigationBarItem(
-            icon: Icon(Icons.search_outlined), label: 'Search'),
+          icon: Icon(Icons.search_outlined),
+          label: 'Search',
+        ),
         BottomNavigationBarItem(
-            icon: Icon(Icons.list_alt_outlined), label: 'Lists'),
+          icon: Icon(Icons.list_alt_outlined),
+          label: 'Lists',
+        ),
         BottomNavigationBarItem(
-            icon: Icon(Icons.bookmark_border), label: 'Saved'),
+          icon: Icon(Icons.bookmark_border),
+          label: 'Saved',
+        ),
         BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline), label: 'Profile'),
+          icon: Icon(Icons.person_outline),
+          label: 'Profile',
+        ),
       ],
     );
   }

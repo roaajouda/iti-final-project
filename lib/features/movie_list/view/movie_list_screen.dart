@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:your_app/models/movies.dart';
-import 'package:your_app/widgets/movie_list_item.dart';
+import 'package:flutter_application_2/features/movie_list/provider/movie_list_provider.dart';
+import 'package:flutter_application_2/models/movies.dart';
+import 'package:flutter_application_2/widgets/movie_list_item.dart';
+import 'package:provider/provider.dart';
 
-class MovieListScreen extends StatefulWidget {
+class MovieListScreen extends StatelessWidget {
   final String title;
   final Future<Movies> Function(int page) fetcher;
 
@@ -14,42 +15,20 @@ class MovieListScreen extends StatefulWidget {
   });
 
   @override
-  State<MovieListScreen> createState() => _MovieListScreenState();
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (_) => MovieListProvider(fetcher: fetcher)..loadInitial(),
+      child: _MovieListView(title: title),
+    );
+  }
 }
 
-class _MovieListScreenState extends State<MovieListScreen> {
-  static const _pageSize = 20;
+// ─── Private View ────────────────────────────────────────────────────────────
 
-  final PagingController<int, Result> _pagingController =
-      PagingController(firstPageKey: 1);
+class _MovieListView extends StatelessWidget {
+  final String title;
 
-  @override
-  void initState() {
-    super.initState();
-    _pagingController.addPageRequestListener(_fetchPage);
-  }
-
-  Future<void> _fetchPage(int pageKey) async {
-    try {
-      final movies = await widget.fetcher(pageKey);
-      final newItems = movies.results ?? [];
-      final isLastPage = newItems.length < _pageSize;
-
-      if (isLastPage) {
-        _pagingController.appendLastPage(newItems);
-      } else {
-        _pagingController.appendPage(newItems, pageKey + 1);
-      }
-    } catch (e) {
-      _pagingController.error = e;
-    }
-  }
-
-  @override
-  void dispose() {
-    _pagingController.dispose();
-    super.dispose();
-  }
+  const _MovieListView({required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +38,7 @@ class _MovieListScreenState extends State<MovieListScreen> {
         backgroundColor: Colors.black,
         foregroundColor: Colors.white,
         title: Text(
-          widget.title,
+          title,
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
         centerTitle: true,
@@ -68,61 +47,123 @@ class _MovieListScreenState extends State<MovieListScreen> {
           onPressed: () => Navigator.pop(context),
         ),
       ),
-      body: PagedListView<int, Result>(
-        pagingController: _pagingController,
-        padding: const EdgeInsets.only(top: 8, bottom: 24),
-        builderDelegate: PagedChildBuilderDelegate<Result>(
-          itemBuilder: (context, movie, index) => MovieListItem(
-            movie: movie,
-            onTap: () {
-              // Navigate to MovieDetailsScreen later
-            },
-          ),
-          // Built-in states — no manual handling needed
-          firstPageProgressIndicatorBuilder: (_) => const Center(
-            child: CircularProgressIndicator(color: Color(0xffffc107)),
-          ),
-          newPageProgressIndicatorBuilder: (_) => const Padding(
-            padding: EdgeInsets.all(24),
-            child: Center(
+      body: Consumer<MovieListProvider>(
+        builder: (context, provider, _) {
+          // ── Initial loading
+          if (provider.state == MovieListState.loading) {
+            return const Center(
               child: CircularProgressIndicator(color: Color(0xffffc107)),
-            ),
-          ),
-          firstPageErrorIndicatorBuilder: (_) => Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text(
-                  'Something went wrong.',
-                  style: TextStyle(color: Colors.white),
-                ),
-                const SizedBox(height: 16),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xffffc107),
-                    foregroundColor: Colors.black,
+            );
+          }
+
+          // ── First load failed
+          if (provider.state == MovieListState.error &&
+              provider.movies.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    provider.errorMessage ?? 'Something went wrong.',
+                    style: const TextStyle(color: Colors.white),
+                    textAlign: TextAlign.center,
                   ),
-                  onPressed: _pagingController.retryLastFailedRequest,
-                  child: const Text('Retry'),
-                ),
-              ],
-            ),
-          ),
-          noItemsFoundIndicatorBuilder: (_) => const Center(
-            child: Text(
-              'No movies found.',
-              style: TextStyle(color: Color(0xff777272)),
-            ),
-          ),
-          noMoreItemsIndicatorBuilder: (_) => const Padding(
-            padding: EdgeInsets.all(24),
-            child: Center(
-              child: Text(
-                'No more movies',
-                style: TextStyle(color: Color(0xff777272)),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xffffc107),
+                      foregroundColor: Colors.black,
+                    ),
+                    onPressed: provider.loadInitial,
+                    child: const Text('Retry'),
+                  ),
+                ],
               ),
+            );
+          }
+
+          // ── Movie list + footer
+          return ListView.builder(
+            padding: const EdgeInsets.only(top: 8, bottom: 32),
+            itemCount: provider.movies.length + 1, // +1 for footer
+            itemBuilder: (context, index) {
+              if (index < provider.movies.length) {
+                return MovieListItem(movie: provider.movies[index]);
+              }
+              return _buildFooter(context, provider);
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildFooter(BuildContext context, MovieListProvider provider) {
+    // Loading next page
+    if (provider.state == MovieListState.loadingMore) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 24),
+        child: Center(
+          child: CircularProgressIndicator(color: Color(0xffffc107)),
+        ),
+      );
+    }
+
+    // Error while loading more
+    if (provider.state == MovieListState.error &&
+        provider.movies.isNotEmpty) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+        child: Column(
+          children: [
+            Text(
+              provider.errorMessage ?? 'Something went wrong.',
+              style: const TextStyle(color: Color(0xff777272)),
+              textAlign: TextAlign.center,
             ),
+            const SizedBox(height: 8),
+            OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                foregroundColor: const Color(0xffffc107),
+                side: const BorderSide(color: Color(0xffffc107)),
+              ),
+              onPressed: () => context.read<MovieListProvider>().loadMore(),
+              child: const Text('Retry'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    // No more pages
+    if (!provider.hasMore) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 24),
+        child: Center(
+          child: Text(
+            "You've reached the end",
+            style: TextStyle(color: Color(0xff777272), fontSize: 13),
           ),
+        ),
+      );
+    }
+
+    // Load More button
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 40),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xffffc107),
+          foregroundColor: Colors.black,
+          minimumSize: const Size(double.infinity, 48),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        onPressed: () => context.read<MovieListProvider>().loadMore(),
+        child: const Text(
+          'Load More',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
         ),
       ),
     );

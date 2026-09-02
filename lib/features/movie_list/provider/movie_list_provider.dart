@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/core/exceptions/app_exception.dart';
+import 'package:flutter_application_2/features/movie_list/controller/movie_list_controller.dart';
 import 'package:flutter_application_2/models/movies.dart';
 
 enum MovieListState { idle, loading, loadingMore, error, success }
 
 class MovieListProvider extends ChangeNotifier {
-  final Future<Movies> Function(int page) fetcher;
+  late final MovieListController _controller;
 
-  MovieListProvider({required this.fetcher});
+  MovieListProvider({required Future<Movies> Function(int page) fetcher}) {
+    _controller = MovieListController(fetcher: fetcher);
+  }
 
   MovieListState state = MovieListState.idle;
   String? errorMessage;
@@ -16,32 +19,31 @@ class MovieListProvider extends ChangeNotifier {
   int _currentPage = 1;
   bool hasMore = true;
 
-  /// Call once when screen opens
   Future<void> loadInitial() async {
     state = MovieListState.loading;
     errorMessage = null;
     notifyListeners();
 
     try {
-      final result = await fetcher(1);
+      final result = await _controller.getPage(1);
+      final items = result.results ?? [];
       movies
         ..clear()
-        ..addAll(result.results ?? []);
+        ..addAll(items);
       _currentPage = 1;
-      hasMore = (result.results?.length ?? 0) >= 20; // TMDB returns 20/page
+      hasMore = items.length >= 20;
       state = MovieListState.success;
     } on AppException catch (e) {
       errorMessage = e.message;
       state = MovieListState.error;
     } catch (_) {
-      errorMessage = 'Something went wrong.';
+      errorMessage = 'Something went wrong. Please try again.';
       state = MovieListState.error;
     }
 
     notifyListeners();
   }
 
-  /// Call when user scrolls near the bottom
   Future<void> loadMore() async {
     if (state == MovieListState.loadingMore || !hasMore) return;
 
@@ -49,21 +51,17 @@ class MovieListProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final result = await fetcher(_currentPage + 1);
-      final newMovies = result.results ?? [];
-      if (newMovies.isEmpty) {
-        hasMore = false;
-      } else {
-        movies.addAll(newMovies);
-        _currentPage++;
-        hasMore = newMovies.length >= 20;
-      }
+      final result = await _controller.getPage(_currentPage + 1);
+      final newItems = result.results ?? [];
+      movies.addAll(newItems);
+      _currentPage++;
+      hasMore = newItems.length >= 20;
       state = MovieListState.success;
     } on AppException catch (e) {
       errorMessage = e.message;
       state = MovieListState.error;
     } catch (_) {
-      errorMessage = 'Something went wrong.';
+      errorMessage = 'Something went wrong. Please try again.';
       state = MovieListState.error;
     }
 

@@ -5,7 +5,7 @@ import 'package:flutter_application_2/core/exceptions/app_exception.dart';
 import 'package:flutter_application_2/models/movies.dart';
 import 'package:flutter_application_2/models/single_movie.dart';
 
-class ApiService {
+class APIService {
   static const String _baseUrl = 'https://api.themoviedb.org/3';
   static const String imageBaseUrl = 'https://image.tmdb.org/t/p/w500';
   static const String _authHeader = 'Bearer ${Constants.tmdbToken}';

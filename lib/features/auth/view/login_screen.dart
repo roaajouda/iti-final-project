@@ -19,8 +19,8 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> login() async {
     AuthProvider provider = context.read<AuthProvider>();
     await provider.login(
-      _emailController.text.trim(),
-      _passwordController.text.trim(),
+      email:_emailController.text.trim(),
+      password:_passwordController.text.trim(),
     );
     if (!mounted) return;
     if (provider.state == AuthState.error) {

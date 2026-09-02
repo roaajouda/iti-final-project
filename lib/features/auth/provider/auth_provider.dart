@@ -1,87 +1,100 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_2/core/exceptions/app_exception.dart';
-import 'package:flutter_application_2/features/auth/controller/auth_controller.dart';
+import '../../../core/exceptions/app_exception.dart';
+import '../controller/auth_controller.dart';
+
+enum AuthState { idle, loading, error, success }
 
 class AuthProvider extends ChangeNotifier {
   final AuthController _controller = AuthController();
 
-  String? errorMessage;
-  String? userName;
-
   AuthState state = AuthState.idle;
+  String errorMessage = '';
+  String _userName = '';
 
-  Future<void> login(String email, String password) async {
+  String get userName => _userName;
+
+  // ── Login ─────────────────────────────────────────────────────────────────
+
+  Future<void> login({
+    required String email,
+    required String password,
+  }) async {
     state = AuthState.loading;
-    errorMessage = null;
-
+    errorMessage = '';
     notifyListeners();
 
     try {
-      await _controller.login(email, password);
-
-      userName = await _controller.getUserName();
-
+      await _controller.login(email: email, password: password);
+      await loadUser();
       state = AuthState.success;
     } on AppException catch (e) {
+      state = AuthState.error;
       errorMessage = e.message;
+    } catch (_) {
       state = AuthState.error;
-    } catch (e) {
-      errorMessage = 'Something went wrong';
-      state = AuthState.error;
+      errorMessage = 'Something went wrong. Please try again.';
     }
 
     notifyListeners();
   }
 
-  Future<void> signUp(
-    String name,
-    String email,
-    String password,
-    String confirmPassword,
-  ) async {
-    state = AuthState.loading;
-    errorMessage = null;
+  // ── Sign Up ───────────────────────────────────────────────────────────────
 
+  Future<void> signUp({
+    required String name,
+    required String email,
+    required String password,
+    required String confirmPassword,
+  }) async {
+    state = AuthState.loading;
+    errorMessage = '';
     notifyListeners();
 
     try {
-      await _controller.signUp(name, email, password, confirmPassword);
-
-      userName = name;
-
+      await _controller.signUp(
+        name: name,
+        email: email,
+        password: password,
+        confirmPassword: confirmPassword,
+      );
+      await loadUser();
       state = AuthState.success;
     } on AppException catch (e) {
+      state = AuthState.error;
       errorMessage = e.message;
+    } catch (_) {
       state = AuthState.error;
-    } catch (e) {
-      errorMessage = 'Something went wrong.';
-      state = AuthState.error;
+      errorMessage = 'Something went wrong. Please try again.';
     }
 
     notifyListeners();
   }
 
-  Future<void> loadUser() async {
-    try {
-      userName = await _controller.getUserName();
-      notifyListeners();
-    } catch (e) {
-      userName = null;
-    }
-  }
-
-  Future<bool> isLoggedIn() async {
-    return await _controller.isLoggedIn();
-  }
+  // ── Logout ────────────────────────────────────────────────────────────────
 
   Future<void> logout() async {
+    state = AuthState.loading;
+    notifyListeners();
+
     await _controller.logout();
-
-    userName = null;
+    _userName = '';
     state = AuthState.idle;
+    notifyListeners();
+  }
 
+  // ── Helpers ───────────────────────────────────────────────────────────────
+
+  Future<void> loadUser() async {
+    _userName = await _controller.getUserName();
+  }
+
+  Future<bool> isLoggedIn() => _controller.isLoggedIn();
+
+  String getUserName() => _userName;
+
+  void resetState() {
+    state = AuthState.idle;
+    errorMessage = '';
     notifyListeners();
   }
 }
-
-enum AuthState { idle, loading, error, success }

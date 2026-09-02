@@ -3,16 +3,18 @@ import 'package:flutter_application_2/core/exceptions/app_exception.dart';
 import 'package:flutter_application_2/features/category/controller/category_controller.dart';
 import 'package:flutter_application_2/models/movies.dart';
 
+enum CategoryState { idle, loading, error, success }
+
 class CategoryProvider extends ChangeNotifier {
   final CategoryController _controller = CategoryController();
 
-  String? errorMessage;
   CategoryState state = CategoryState.idle;
+  String? errorMessage;
 
-  Movies? allMovies;
   Movies? mostPopular;
   Movies? topRated;
   Movies? latest;
+  Movies? all;
 
   Future<void> loadCategory(int genreId) async {
     state = CategoryState.loading;
@@ -20,33 +22,43 @@ class CategoryProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // Run all four fetches in parallel — faster than sequential awaits
       final results = await Future.wait([
-        _controller.getMovies(genreId, 1),
-        _controller.getMostPopular(genreId, 1),
-        _controller.getTopRated(genreId, 1),
-        _controller.getLatest(genreId, 1),
+        _controller.getMostPopular(genreId),
+        _controller.getTopRated(genreId),
+        _controller.getLatest(genreId),
+        _controller.getAll(genreId),
       ]);
 
-      allMovies   = results[0];
-      mostPopular = results[1];
-      topRated    = results[2];
-      latest      = results[3];
-
+      mostPopular = results[0];
+      topRated   = results[1];
+      latest     = results[2];
+      all        = results[3];
       state = CategoryState.success;
     } on EmptyMoviesException {
-      // Not a real error — just an empty genre
       state = CategoryState.success;
     } on AppException catch (e) {
       errorMessage = e.message;
       state = CategoryState.error;
-    } catch (e) {
-      errorMessage = 'Something went wrong.';
+    } catch (_) {
+      errorMessage = 'Something went wrong. Please try again.';
       state = CategoryState.error;
     }
 
     notifyListeners();
   }
-}
 
-enum CategoryState { idle, loading, error, success }
+  // ── Fetchers for MovieListScreen ──────────────────────────────────
+  // Screen calls these — they go through controller → service
+
+  Future<Movies> fetchMostPopularPage(int genreId, int page) =>
+      _controller.getMostPopular(genreId, page: page);
+
+  Future<Movies> fetchTopRatedPage(int genreId, int page) =>
+      _controller.getTopRated(genreId, page: page);
+
+  Future<Movies> fetchLatestPage(int genreId, int page) =>
+      _controller.getLatest(genreId, page: page);
+
+  Future<Movies> fetchAllPage(int genreId, int page) =>
+      _controller.getAll(genreId, page: page);
+}

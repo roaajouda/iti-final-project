@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/features/category/provider/category_provider.dart';
+import 'package:flutter_application_2/features/movie_list/view/movie_list_screen.dart';
+import 'package:flutter_application_2/models/movies.dart';
 import 'package:flutter_application_2/models/single_movie.dart';
 import 'package:flutter_application_2/widgets/movie_section.dart';
 import 'package:provider/provider.dart';
@@ -18,36 +20,52 @@ class _CategoryScreenState extends State<CategoryScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<CategoryProvider>().loadCategory(widget.genre.id);
+      context.read<CategoryProvider>().loadCategory(widget.genre.id!);
     });
+  }
+
+  void _goToMovieList(String title, Future<Movies> Function(int page) fetcher) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => MovieListScreen(title: title, fetcher: fetcher),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final genreId   = widget.genre.id!;
+    final genreName = widget.genre.name ?? '';
+
     return Scaffold(
-      backgroundColor: const Color(0xff0B0A0A),
+      backgroundColor: Colors.black,
       appBar: AppBar(
-        backgroundColor: const Color(0xff0F0E0E),
+        backgroundColor: Colors.black,
         foregroundColor: Colors.white,
         title: Text(
-          widget.genre.name,
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.bold,
-          ),
+          genreName,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
         ),
-        elevation: 0,
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: Consumer<CategoryProvider>(
         builder: (context, provider, _) {
+
           if (provider.state == CategoryState.loading) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: CircularProgressIndicator(color: Color(0xffffc107)),
+            );
           }
 
           if (provider.state == CategoryState.error) {
             return Center(
               child: Column(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
                     provider.errorMessage ?? 'Something went wrong.',
@@ -56,8 +74,11 @@ class _CategoryScreenState extends State<CategoryScreen> {
                   ),
                   const SizedBox(height: 16),
                   ElevatedButton(
-                    onPressed: () =>
-                        provider.loadCategory(widget.genre.id),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xffffc107),
+                      foregroundColor: Colors.black,
+                    ),
+                    onPressed: () => provider.loadCategory(genreId),
                     child: const Text('Retry'),
                   ),
                 ],
@@ -67,49 +88,40 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
           return SingleChildScrollView(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 20),
-
                 MovieSection(
                   title: 'Most Popular',
                   movies: provider.mostPopular,
-                  onMovieTap: (movie) {
-                    // Navigator.push to MovieDetailsScreen(movieId: movie.id)
-                  },
+                  onSeeAll: () => _goToMovieList(
+                    'Most Popular — $genreName',
+                    (page) => provider.fetchMostPopularPage(genreId, page),
+                  ),
                 ),
-
-                const SizedBox(height: 25),
-
                 MovieSection(
                   title: 'Top Rated',
                   movies: provider.topRated,
-                  onMovieTap: (movie) {
-                    // Navigator.push to MovieDetailsScreen(movieId: movie.id)
-                  },
+                  onSeeAll: () => _goToMovieList(
+                    'Top Rated — $genreName',
+                    (page) => provider.fetchTopRatedPage(genreId, page),
+                  ),
                 ),
-
-                const SizedBox(height: 25),
-
                 MovieSection(
                   title: 'Latest Releases',
                   movies: provider.latest,
-                  onMovieTap: (movie) {
-                    // Navigator.push to MovieDetailsScreen(movieId: movie.id)
-                  },
+                  onSeeAll: () => _goToMovieList(
+                    'Latest — $genreName',
+                    (page) => provider.fetchLatestPage(genreId, page),
+                  ),
                 ),
-
-                const SizedBox(height: 25),
-
                 MovieSection(
-                  title: 'All ${widget.genre.name}',
-                  movies: provider.allMovies,
-                  onMovieTap: (movie) {
-                    // Navigator.push to MovieDetailsScreen(movieId: movie.id)
-                  },
+                  title: 'All $genreName',
+                  movies: provider.all,
+                  onSeeAll: () => _goToMovieList(
+                    'All $genreName',
+                    (page) => provider.fetchAllPage(genreId, page),
+                  ),
                 ),
-
-                const SizedBox(height: 20),
+                const SizedBox(height: 24),
               ],
             ),
           );

@@ -15,8 +15,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   final TextEditingController _emailController = TextEditingController();
 
-  final TextEditingController _passwordController =
-      TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   final TextEditingController _confirmPasswordController =
       TextEditingController();
@@ -28,26 +27,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final provider = context.read<AuthProvider>();
 
     await provider.signUp(
-      _nameController.text.trim(),
-      _emailController.text.trim(),
-      _passwordController.text.trim(),
-      _confirmPasswordController.text.trim(),
+      name: _nameController.text.trim(),
+      email: _emailController.text.trim(),
+      password: _passwordController.text.trim(),
+      confirmPassword: _confirmPasswordController.text.trim(),
     );
 
     if (!mounted) return;
 
     if (provider.state == AuthState.error) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(provider.errorMessage!),
-        ),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(provider.errorMessage!)));
     } else if (provider.state == AuthState.success) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (context) => const HomeScreen(),
-        ),
+        MaterialPageRoute(builder: (context) => const HomeScreen()),
       );
     }
   }
@@ -64,9 +58,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sign Up'),
-      ),
+      appBar: AppBar(title: const Text('Sign Up')),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -90,10 +82,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     const Text(
                       'Create a new account',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 16,
-                      ),
+                      style: TextStyle(color: Colors.grey, fontSize: 16),
                     ),
 
                     const SizedBox(height: 40),
