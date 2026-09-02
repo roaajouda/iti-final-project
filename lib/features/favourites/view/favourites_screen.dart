@@ -4,6 +4,7 @@ import 'package:flutter_application_2/core/theme/app_colors.dart';
 import 'package:flutter_application_2/widgets/app_bottom_nav_bar.dart';
 import 'package:flutter_application_2/widgets/movie_card.dart';
 import 'package:provider/provider.dart';
+
 import '../provider/favourites_provider.dart';
 
 class FavouritesScreen extends StatelessWidget {
@@ -30,8 +31,9 @@ class _FavouritesView extends StatelessWidget {
         foregroundColor: AppColors.textPrimary,
         elevation: 0,
       ),
-      bottomNavigationBar:
-          const AppBottomNavBar(currentIndex: NavIndex.favourites),
+      bottomNavigationBar: const AppBottomNavBar(
+        currentIndex: NavIndex.favourites,
+      ),
       body: SafeArea(
         child: Consumer<FavouritesProvider>(
           builder: (context, provider, _) {
@@ -78,6 +80,16 @@ class _FavouritesView extends StatelessWidget {
       );
     }
 
+    if (provider.state == FavouritesState.error) {
+      return Center(
+        child: Text(
+          provider.errorMessage ?? 'Something went wrong.',
+          style: const TextStyle(color: Colors.white54),
+          textAlign: TextAlign.center,
+        ),
+      );
+    }
+
     if (provider.movies.isEmpty) {
       return _buildEmptyState(context);
     }
@@ -118,7 +130,11 @@ class _FavouritesView extends StatelessWidget {
             const Text(
               'Movies you mark as favourite will appear here.',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white54, fontSize: 13, height: 1.5),
+              style: TextStyle(
+                color: Colors.white54,
+                fontSize: 13,
+                height: 1.5,
+              ),
             ),
             const SizedBox(height: 28),
             OutlinedButton(
@@ -126,8 +142,10 @@ class _FavouritesView extends StatelessWidget {
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppColors.accent,
                 side: const BorderSide(color: AppColors.accent),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 36, vertical: 14),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 36,
+                  vertical: 14,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(30),
                 ),

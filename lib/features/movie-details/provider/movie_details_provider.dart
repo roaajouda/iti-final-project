@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/core/models/movie_record.dart';
+
 import '../../../core/exceptions/app_exception.dart';
 import '../../../core/models/movies.dart';
 import '../../../core/models/single_movie.dart';
@@ -15,8 +16,10 @@ class MovieDetailsProvider extends ChangeNotifier {
   }
 
   MovieDetailsState state = MovieDetailsState.idle;
+
   SingleMovie? movie;
   List<Result> similarMovies = [];
+
   String errorMessage = '';
 
   bool isFavourite = false;
@@ -24,9 +27,9 @@ class MovieDetailsProvider extends ChangeNotifier {
   bool isWatchLater = false;
   bool isWatched = false;
 
-
   Future<void> loadDetails() async {
     state = MovieDetailsState.loading;
+    errorMessage = '';
     notifyListeners();
 
     try {
@@ -50,54 +53,97 @@ class MovieDetailsProvider extends ChangeNotifier {
     } on AppException catch (e) {
       state = MovieDetailsState.error;
       errorMessage = e.message;
-    } catch (e) {
+    } catch (_) {
       state = MovieDetailsState.error;
-      errorMessage = 'Failed to load movie details.';
+      errorMessage = 'Something went wrong. Please try again.';
     }
 
     notifyListeners();
   }
-
 
   MovieRecord get _record => MovieRecord.fromSingleMovie(movie!);
 
   Future<void> toggleFavourite() async {
-    isFavourite = !isFavourite;
-    notifyListeners();
-    if (isFavourite) {
-      await _controller.addFavourite(_record);
-    } else {
-      await _controller.removeFavourite();
+    try {
+      if (isFavourite) {
+        await _controller.removeFavourite();
+        isFavourite = false;
+      } else {
+        await _controller.addFavourite(_record);
+        isFavourite = true;
+      }
+
+      errorMessage = '';
+      notifyListeners();
+    } on AppException catch (e) {
+      errorMessage = e.message;
+      notifyListeners();
+    } catch (_) {
+      errorMessage = 'Something went wrong. Please try again.';
+      notifyListeners();
     }
   }
 
   Future<void> toggleWatchNow() async {
-    isWatchNow = !isWatchNow;
-    notifyListeners();
-    if (isWatchNow) {
-      await _controller.addWatchNow(_record);
-    } else {
-      await _controller.removeWatchNow();
+    try {
+      if (isWatchNow) {
+        await _controller.removeWatchNow();
+        isWatchNow = false;
+      } else {
+        await _controller.addWatchNow(_record);
+        isWatchNow = true;
+      }
+
+      errorMessage = '';
+      notifyListeners();
+    } on AppException catch (e) {
+      errorMessage = e.message;
+      notifyListeners();
+    } catch (_) {
+      errorMessage = 'Something went wrong. Please try again.';
+      notifyListeners();
     }
   }
 
   Future<void> toggleWatchLater() async {
-    isWatchLater = !isWatchLater;
-    notifyListeners();
-    if (isWatchLater) {
-      await _controller.addWatchLater(_record);
-    } else {
-      await _controller.removeWatchLater();
+    try {
+      if (isWatchLater) {
+        await _controller.removeWatchLater();
+        isWatchLater = false;
+      } else {
+        await _controller.addWatchLater(_record);
+        isWatchLater = true;
+      }
+
+      errorMessage = '';
+      notifyListeners();
+    } on AppException catch (e) {
+      errorMessage = e.message;
+      notifyListeners();
+    } catch (_) {
+      errorMessage = 'Something went wrong. Please try again.';
+      notifyListeners();
     }
   }
 
   Future<void> toggleWatched() async {
-    isWatched = !isWatched;
-    notifyListeners();
-    if (isWatched) {
-      await _controller.addWatched(_record);
-    } else {
-      await _controller.removeWatched();
+    try {
+      if (isWatched) {
+        await _controller.removeWatched();
+        isWatched = false;
+      } else {
+        await _controller.addWatched(_record);
+        isWatched = true;
+      }
+
+      errorMessage = '';
+      notifyListeners();
+    } on AppException catch (e) {
+      errorMessage = e.message;
+      notifyListeners();
+    } catch (_) {
+      errorMessage = 'Something went wrong. Please try again.';
+      notifyListeners();
     }
   }
 }

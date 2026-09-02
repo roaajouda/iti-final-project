@@ -3,6 +3,7 @@ import 'package:flutter_application_2/core/theme/app_colors.dart';
 import 'package:flutter_application_2/widgets/app_bottom_nav_bar.dart';
 import 'package:flutter_application_2/widgets/movie_card.dart';
 import 'package:provider/provider.dart';
+
 import '../provider/my_lists_provider.dart';
 
 class MyListsScreen extends StatelessWidget {
@@ -29,15 +30,15 @@ class _MyListsView extends StatelessWidget {
         elevation: 0,
       ),
       backgroundColor: AppColors.background,
-      bottomNavigationBar:
-          const AppBottomNavBar(currentIndex: NavIndex.myLists),
+      bottomNavigationBar: const AppBottomNavBar(
+        currentIndex: NavIndex.myLists,
+      ),
       body: SafeArea(
         child: Consumer<MyListsProvider>(
           builder: (context, provider, _) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Title
                 const Padding(
                   padding: EdgeInsets.fromLTRB(20, 20, 20, 16),
                   child: Text(
@@ -50,10 +51,11 @@ class _MyListsView extends StatelessWidget {
                   ),
                 ),
 
-                // Tab chips
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
+                SizedBox(
+                  height: 44,
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     children: [
                       _TabChip(
                         label: 'Watched',
@@ -90,13 +92,17 @@ class _MyListsView extends StatelessWidget {
   Widget _buildBody(BuildContext context, MyListsProvider provider) {
     if (provider.state == MyListsState.loading) {
       return const Center(
-          child: CircularProgressIndicator(color: AppColors.accent));
+        child: CircularProgressIndicator(color: AppColors.accent),
+      );
     }
 
     if (provider.state == MyListsState.error) {
-      return const Center(
-        child:
-            Text('Failed to load', style: TextStyle(color: Colors.white54)),
+      return Center(
+        child: Text(
+          provider.errorMessage ?? 'Something went wrong.',
+          style: const TextStyle(color: Colors.white54),
+          textAlign: TextAlign.center,
+        ),
       );
     }
 

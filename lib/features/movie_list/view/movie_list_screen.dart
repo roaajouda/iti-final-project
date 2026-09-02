@@ -48,7 +48,6 @@ class _MovieListView extends StatelessWidget {
       ),
       body: Consumer<MovieListProvider>(
         builder: (context, provider, _) {
-          // ── Initial loading
           if (provider.state == MovieListState.loading) {
             return const Center(
               child: CircularProgressIndicator(color: Color(0xffffc107)),

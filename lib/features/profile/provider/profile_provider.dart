@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/core/exceptions/app_exception.dart';
 import '../controller/profile_controller.dart';
 
 enum ProfileState { idle, loading, error, success }
@@ -7,6 +8,7 @@ class ProfileProvider extends ChangeNotifier {
   final ProfileController _controller = ProfileController();
 
   ProfileState state = ProfileState.idle;
+  String? errorMessage;
 
   String name = '';
   String email = '';
@@ -16,6 +18,7 @@ class ProfileProvider extends ChangeNotifier {
 
   Future<void> loadProfile() async {
     state = ProfileState.loading;
+    errorMessage = null;
     notifyListeners();
 
     try {
@@ -33,7 +36,11 @@ class ProfileProvider extends ChangeNotifier {
       wantToWatchCount = results[3] as int;
 
       state = ProfileState.success;
+    } on AppException catch (e) {
+      errorMessage = e.message;
+      state = ProfileState.error;
     } catch (_) {
+      errorMessage = 'Something went wrong. Please try again.';
       state = ProfileState.error;
     }
 

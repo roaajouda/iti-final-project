@@ -41,6 +41,15 @@ class _ProfileView extends StatelessWidget {
                 child: CircularProgressIndicator(color: AppColors.accent),
               );
             }
+            if (provider.state == ProfileState.error) {
+              return Center(
+                child: Text(
+                  provider.errorMessage ?? 'Something went wrong.',
+                  style: const TextStyle(color: AppColors.textSecondary),
+                  textAlign: TextAlign.center,
+                ),
+              );
+            }
 
             return SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
@@ -77,7 +86,7 @@ class _ProfileView extends StatelessWidget {
             color: AppColors.accentDark,
             shape: BoxShape.circle,
             border: Border.all(
-              color: AppColors.accent.withOpacity(0.4),
+              color: AppColors.accent.withValues(alpha: 0.4),
               width: 2,
             ),
           ),

@@ -1,5 +1,8 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/core/exceptions/app_exception.dart';
+
 import '../../../core/models/movies.dart';
 import '../controller/search_controller.dart';
 
@@ -9,8 +12,12 @@ class SearchProvider extends ChangeNotifier {
   final SearchScreenController _controller = SearchScreenController();
 
   SearchState state = SearchState.idle;
+
   List<Result> results = [];
   List<String> trendingKeywords = [];
+
+  String? errorMessage;
+
   String _query = '';
   Timer? _debounce;
 
@@ -21,15 +28,22 @@ class SearchProvider extends ChangeNotifier {
     _loadTrendingKeywords();
   }
 
-
   Future<void> _loadTrendingKeywords() async {
-    trendingKeywords = await _controller.getTrendingKeywords();
-    notifyListeners();
+    try {
+      trendingKeywords = await _controller.getTrendingKeywords();
+      notifyListeners();
+    } on AppException catch (e) {
+      errorMessage = e.message;
+      notifyListeners();
+    } catch (_) {
+      errorMessage = 'Something went wrong. Please try again.';
+      notifyListeners();
+    }
   }
-
 
   void onQueryChanged(String value) {
     _query = value;
+    errorMessage = null;
     notifyListeners();
 
     _debounce?.cancel();
@@ -46,20 +60,28 @@ class SearchProvider extends ChangeNotifier {
 
   Future<void> searchKeyword(String keyword) async {
     _query = keyword;
+    errorMessage = null;
     notifyListeners();
+
     await _search(keyword);
   }
 
   Future<void> _search(String query) async {
     state = SearchState.loading;
+    errorMessage = null;
     notifyListeners();
 
     try {
       results = await _controller.search(query);
       state = SearchState.success;
-    } catch (_) {
-      state = SearchState.error;
+    } on AppException catch (e) {
+      errorMessage = e.message;
       results = [];
+      state = SearchState.error;
+    } catch (_) {
+      errorMessage = 'Something went wrong. Please try again.';
+      results = [];
+      state = SearchState.error;
     }
 
     notifyListeners();
@@ -69,6 +91,7 @@ class SearchProvider extends ChangeNotifier {
     _debounce?.cancel();
     _query = '';
     results = [];
+    errorMessage = null;
     state = SearchState.idle;
     notifyListeners();
   }

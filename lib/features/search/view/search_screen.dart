@@ -3,6 +3,7 @@ import 'package:flutter_application_2/core/theme/app_colors.dart';
 import 'package:flutter_application_2/widgets/app_bottom_nav_bar.dart';
 import 'package:flutter_application_2/widgets/movie_card.dart';
 import 'package:provider/provider.dart';
+
 import '../provider/search_provider.dart';
 
 class SearchScreen extends StatelessWidget {
@@ -93,7 +94,11 @@ class _SearchViewState extends State<_SearchView> {
                 decoration: const InputDecoration(
                   hintText: 'Search TMDB...',
                   hintStyle: TextStyle(color: Colors.white38, fontSize: 15),
-                  prefixIcon: Icon(Icons.search, color: Colors.white38, size: 20),
+                  prefixIcon: Icon(
+                    Icons.search,
+                    color: Colors.white38,
+                    size: 20,
+                  ),
                   border: InputBorder.none,
                   contentPadding: EdgeInsets.symmetric(vertical: 14),
                 ),
@@ -155,7 +160,9 @@ class _SearchViewState extends State<_SearchView> {
                     },
                     child: Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 14, vertical: 8),
+                        horizontal: 14,
+                        vertical: 8,
+                      ),
                       decoration: BoxDecoration(
                         border: Border.all(color: Colors.white24),
                         borderRadius: BorderRadius.circular(20),
@@ -163,7 +170,9 @@ class _SearchViewState extends State<_SearchView> {
                       child: Text(
                         kw,
                         style: const TextStyle(
-                            color: Colors.white70, fontSize: 13),
+                          color: Colors.white70,
+                          fontSize: 13,
+                        ),
                       ),
                     ),
                   ),
@@ -183,9 +192,9 @@ class _SearchViewState extends State<_SearchView> {
     }
 
     if (provider.state == SearchState.error) {
-      return const Center(
+      return Center(
         child: Text(
-          'Something went wrong.',
+          provider.errorMessage ?? 'Something went wrong.',
           style: TextStyle(color: Colors.white54),
         ),
       );

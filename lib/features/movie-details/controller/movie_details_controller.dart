@@ -17,13 +17,9 @@ class MovieDetailsController {
       _apiService.getMovieDetails(movieId);
 
   Future<List<Result>> getSimilarMovies() async {
-    try {
-      final movies = await _apiService.getSimilarMovies(movieId);
-      return movies.results ?? [];
-    } catch (_) {
-      return [];
-    }
-  }
+  final movies = await _apiService.getSimilarMovies(movieId);
+  return movies.results ?? [];
+}
 
   Future<bool> isFavourite() async {
     return _db.isFavourite(movieId);

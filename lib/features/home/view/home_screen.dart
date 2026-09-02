@@ -44,12 +44,15 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(Icons.error_outline,
-                      color: AppColors.textSecondary, size: 48),
+                  const Icon(
+                    Icons.error_outline,
+                    color: AppColors.textSecondary,
+                    size: 48,
+                  ),
                   const SizedBox(height: 12),
-                  const Text(
-                    'Something went wrong.',
-                    style: TextStyle(color: Colors.white),
+                  Text(
+                    provider.errorMessage ?? 'Something went wrong.',
+                    style: const TextStyle(color: Colors.white),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 16),
@@ -68,6 +71,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildHeader(context),
+                  SizedBox(height: 16),
+
                   const AppSearchBar(),
                   const SizedBox(height: 16),
                   _buildGenreChips(context, provider.genres),
@@ -76,6 +81,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     movies: provider.nowPlayingMovies,
                     onTap: (movie) => context.goToMovieDetails(movie.id!),
                   ),
+                  SizedBox(height: 16),
                   MovieSection(
                     title: 'Most Popular',
                     movies: provider.popularMovies,
@@ -84,6 +90,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       provider.fetchPopularPage,
                     ),
                   ),
+                  SizedBox(height: 16),
+
                   MovieSection(
                     title: 'Top Rated',
                     movies: provider.topRatedMovies,
@@ -92,6 +100,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       provider.fetchTopRatedPage,
                     ),
                   ),
+                  SizedBox(height: 16),
+
                   MovieSection(
                     title: 'Upcoming',
                     movies: provider.upcomingMovies,
@@ -110,14 +120,14 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-
   Widget _buildHeader(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
       child: Consumer<AuthUserProvider>(
         builder: (context, auth, _) {
-          final name =
-              auth.getUserName().isNotEmpty ? auth.getUserName() : 'User';
+          final name = auth.getUserName().isNotEmpty
+              ? auth.getUserName()
+              : 'User';
           return Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

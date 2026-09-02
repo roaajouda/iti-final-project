@@ -56,8 +56,8 @@ class _CategoryView extends StatelessWidget {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Text(
-                    'Something went wrong.',
+                  Text(
+                    provider.errorMessage ?? 'Something went wrong.',
                     style: TextStyle(color: Colors.white),
                     textAlign: TextAlign.center,
                   ),
@@ -75,6 +75,8 @@ class _CategoryView extends StatelessWidget {
             child: Column(
               children: [
                 const AppSearchBar(margin: EdgeInsets.fromLTRB(16, 12, 16, 4)),
+                SizedBox(height: 16),
+
                 MovieSection(
                   title: 'Most Popular',
                   movies: provider.mostPopular,
@@ -83,6 +85,8 @@ class _CategoryView extends StatelessWidget {
                     (page) => provider.fetchMostPopularPage(genreId, page),
                   ),
                 ),
+                SizedBox(height: 16),
+
                 MovieSection(
                   title: 'Top Rated',
                   movies: provider.topRated,
@@ -91,6 +95,8 @@ class _CategoryView extends StatelessWidget {
                     (page) => provider.fetchTopRatedPage(genreId, page),
                   ),
                 ),
+                SizedBox(height: 16),
+
                 MovieSection(
                   title: 'Latest Releases',
                   movies: provider.latest,
@@ -99,6 +105,8 @@ class _CategoryView extends StatelessWidget {
                     (page) => provider.fetchLatestPage(genreId, page),
                   ),
                 ),
+                SizedBox(height: 16),
+
                 MovieSection(
                   title: 'All $genreName',
                   movies: provider.all,
