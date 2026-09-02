@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_2/features/movie-details/view/movie_details_screen.dart';
-import 'package:flutter_application_2/models/movie.record.dart';
+import 'package:flutter_application_2/core/theme/app_colors.dart';
+import 'package:flutter_application_2/widgets/app_bottom_nav_bar.dart';
+import 'package:flutter_application_2/widgets/movie_card.dart';
 import 'package:provider/provider.dart';
 import '../provider/my_lists_provider.dart';
 
@@ -19,15 +20,17 @@ class MyListsScreen extends StatelessWidget {
 class _MyListsView extends StatelessWidget {
   const _MyListsView();
 
-  static const Color _bg = Color(0xFF141414);
-  static const Color _accent = Color(0xFFFFB800);
-  static const Color _surface = Color(0xFF2A2A2A);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      backgroundColor: _bg,
+      appBar: AppBar(
+        backgroundColor: AppColors.background,
+        foregroundColor: AppColors.textPrimary,
+        elevation: 0,
+      ),
+      backgroundColor: AppColors.background,
+      bottomNavigationBar:
+          const AppBottomNavBar(currentIndex: NavIndex.myLists),
       body: SafeArea(
         child: Consumer<MyListsProvider>(
           builder: (context, provider, _) {
@@ -47,6 +50,7 @@ class _MyListsView extends StatelessWidget {
                   ),
                 ),
 
+                // Tab chips
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Row(
@@ -85,12 +89,14 @@ class _MyListsView extends StatelessWidget {
 
   Widget _buildBody(BuildContext context, MyListsProvider provider) {
     if (provider.state == MyListsState.loading) {
-      return const Center(child: CircularProgressIndicator(color: _accent));
+      return const Center(
+          child: CircularProgressIndicator(color: AppColors.accent));
     }
 
     if (provider.state == MyListsState.error) {
       return const Center(
-        child: Text('Failed to load', style: TextStyle(color: Colors.white54)),
+        child:
+            Text('Failed to load', style: TextStyle(color: Colors.white54)),
       );
     }
 
@@ -109,21 +115,30 @@ class _MyListsView extends StatelessWidget {
         childAspectRatio: 0.58,
       ),
       itemCount: movies.length,
-      itemBuilder: (context, index) => _MovieCard(movie: movies[index]),
+      itemBuilder: (context, index) => MovieCard.fromRecord(movies[index]),
     );
   }
 
   Widget _buildEmptyState(ListTab tab) {
     final labels = {
-      ListTab.watched: ('check_circle', 'Nothing watched yet',
-          'Movies you mark as watched will appear here.'),
-      ListTab.watching: ('play_circle', 'Nothing here yet',
-          'Movies you are currently watching will appear here.'),
-      ListTab.wantToWatch: ('bookmark', 'Nothing saved yet',
-          'Movies you want to watch will appear here.'),
+      ListTab.watched: (
+        Icons.check_circle_outline,
+        'Nothing watched yet',
+        'Movies you mark as watched will appear here.',
+      ),
+      ListTab.watching: (
+        Icons.play_circle_outline,
+        'Nothing here yet',
+        'Movies you are currently watching will appear here.',
+      ),
+      ListTab.wantToWatch: (
+        Icons.bookmark_border,
+        'Nothing saved yet',
+        'Movies you want to watch will appear here.',
+      ),
     };
 
-    final (_, title, subtitle) = labels[tab]!;
+    final (icon, title, subtitle) = labels[tab]!;
 
     return Center(
       child: Padding(
@@ -135,18 +150,10 @@ class _MyListsView extends StatelessWidget {
               width: 72,
               height: 72,
               decoration: BoxDecoration(
-                color: const Color(0xFF1F1F1F),
+                color: AppColors.surface,
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: Icon(
-                tab == ListTab.watched
-                    ? Icons.check_circle_outline
-                    : tab == ListTab.watching
-                        ? Icons.play_circle_outline
-                        : Icons.bookmark_border,
-                color: Colors.white38,
-                size: 32,
-              ),
+              child: Icon(icon, color: Colors.white38, size: 32),
             ),
             const SizedBox(height: 20),
             Text(
@@ -174,13 +181,10 @@ class _MyListsView extends StatelessWidget {
   }
 }
 
-
 class _TabChip extends StatelessWidget {
   final String label;
   final bool active;
   final VoidCallback onTap;
-
-  static const Color _accent = Color(0xFFFFB800);
 
   const _TabChip({
     required this.label,
@@ -196,7 +200,7 @@ class _TabChip extends StatelessWidget {
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          color: active ? _accent : const Color(0xFF2A2A2A),
+          color: active ? AppColors.accent : AppColors.surfaceHigh,
           borderRadius: BorderRadius.circular(24),
           border: active ? null : Border.all(color: Colors.white12),
         ),
@@ -211,60 +215,4 @@ class _TabChip extends StatelessWidget {
       ),
     );
   }
-}
-
-
-class _MovieCard extends StatelessWidget {
-  final MovieRecord movie;
-  const _MovieCard({required this.movie});
-
-  static const String _imgBase = 'https://image.tmdb.org/t/p/w342';
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () => Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => MovieDetailsScreen(movieId: movie.id),
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: movie.posterPath != null
-                  ? Image.network(
-                      '$_imgBase${movie.posterPath}',
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      errorBuilder: (_, __, ___) => _placeholder(),
-                    )
-                  : _placeholder(),
-            ),
-          ),
-          const SizedBox(height: 6),
-          Text(
-            movie.title,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 11,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _placeholder() => Container(
-        decoration: BoxDecoration(
-          color: const Color(0xFF1F1F1F),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: const Icon(Icons.movie, color: Colors.white24),
-      );
 }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/features/movie_list/provider/movie_list_provider.dart';
-import 'package:flutter_application_2/models/movies.dart';
+import 'package:flutter_application_2/core/models/movies.dart';
 import 'package:flutter_application_2/widgets/movie_list_item.dart';
 import 'package:provider/provider.dart';
 

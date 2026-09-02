@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/movies.dart';
+import '../core/models/movies.dart';
 
 class NowPlayingBanner extends StatelessWidget {
   final Movies? movies;

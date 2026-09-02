@@ -3,8 +3,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter_application_2/core/constants.dart';
 import 'package:flutter_application_2/core/exceptions/app_exception.dart';
-import 'package:flutter_application_2/models/movies.dart';
-import 'package:flutter_application_2/models/single_movie.dart';
+import 'package:flutter_application_2/core/models/movies.dart';
+import 'package:flutter_application_2/core/models/single_movie.dart';
 
 class APIService {
   static const String _baseUrl = 'https://api.themoviedb.org/3';

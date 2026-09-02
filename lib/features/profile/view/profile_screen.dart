@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/core/theme/app_colors.dart';
+import 'package:flutter_application_2/widgets/app_bottom_nav_bar.dart';
 import 'package:provider/provider.dart';
+
 import '../provider/profile_provider.dart';
 import '../../auth/view/login_screen.dart';
 
@@ -18,20 +21,24 @@ class ProfileScreen extends StatelessWidget {
 class _ProfileView extends StatelessWidget {
   const _ProfileView();
 
-  static const Color _bg = Color(0xFF141414);
-  static const Color _accent = Color(0xFFFFB800);
-  static const Color _surface = Color(0xFF1F1F1F);
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: _bg,
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        backgroundColor: AppColors.background,
+        foregroundColor: AppColors.textPrimary,
+        elevation: 0,
+      ),
+      bottomNavigationBar: const AppBottomNavBar(
+        currentIndex: NavIndex.profile,
+      ),
       body: SafeArea(
         child: Consumer<ProfileProvider>(
           builder: (context, provider, _) {
             if (provider.state == ProfileState.loading) {
               return const Center(
-                child: CircularProgressIndicator(color: _accent),
+                child: CircularProgressIndicator(color: AppColors.accent),
               );
             }
 
@@ -56,7 +63,6 @@ class _ProfileView extends StatelessWidget {
     );
   }
 
-
   Widget _buildAvatar(ProfileProvider provider) {
     final initial = provider.name.isNotEmpty
         ? provider.name[0].toUpperCase()
@@ -68,15 +74,18 @@ class _ProfileView extends StatelessWidget {
           width: 60,
           height: 60,
           decoration: BoxDecoration(
-            color: const Color(0xFF3D2E00),
+            color: AppColors.accentDark,
             shape: BoxShape.circle,
-            border: Border.all(color: _accent.withOpacity(0.4), width: 2),
+            border: Border.all(
+              color: AppColors.accent.withOpacity(0.4),
+              width: 2,
+            ),
           ),
           alignment: Alignment.center,
           child: Text(
             initial,
             style: const TextStyle(
-              color: _accent,
+              color: AppColors.accent,
               fontSize: 24,
               fontWeight: FontWeight.bold,
             ),
@@ -89,7 +98,7 @@ class _ProfileView extends StatelessWidget {
             Text(
               provider.name,
               style: const TextStyle(
-                color: Colors.white,
+                color: AppColors.textPrimary,
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
@@ -98,7 +107,7 @@ class _ProfileView extends StatelessWidget {
             Text(
               provider.email,
               style: const TextStyle(
-                color: Colors.white38,
+                color: AppColors.textMuted,
                 fontSize: 13,
                 fontFamily: 'monospace',
               ),
@@ -108,7 +117,6 @@ class _ProfileView extends StatelessWidget {
       ],
     );
   }
-
 
   Widget _buildStats(ProfileProvider provider) {
     return Row(
@@ -121,10 +129,7 @@ class _ProfileView extends StatelessWidget {
         ),
         const SizedBox(width: 10),
         Expanded(
-          child: _StatCard(
-            count: provider.watchedCount,
-            label: 'WATCHED',
-          ),
+          child: _StatCard(count: provider.watchedCount, label: 'WATCHED'),
         ),
         const SizedBox(width: 10),
         Expanded(
@@ -137,7 +142,6 @@ class _ProfileView extends StatelessWidget {
     );
   }
 
-
   Widget _buildLogoutButton(BuildContext context, ProfileProvider provider) {
     return SizedBox(
       width: double.infinity,
@@ -145,8 +149,8 @@ class _ProfileView extends StatelessWidget {
       child: ElevatedButton(
         onPressed: () => _confirmLogout(context, provider),
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFF3D0A0A),
-          foregroundColor: Colors.redAccent,
+          backgroundColor: AppColors.dangerDark,
+          foregroundColor: AppColors.danger,
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
@@ -157,7 +161,7 @@ class _ProfileView extends StatelessWidget {
           style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.w600,
-            color: Colors.redAccent,
+            color: AppColors.danger,
           ),
         ),
       ),
@@ -165,27 +169,35 @@ class _ProfileView extends StatelessWidget {
   }
 
   Future<void> _confirmLogout(
-      BuildContext context, ProfileProvider provider) async {
+    BuildContext context,
+    ProfileProvider provider,
+  ) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (_) => AlertDialog(
-        backgroundColor: const Color(0xFF1F1F1F),
-        title: const Text('Log out?',
-            style: TextStyle(color: Colors.white)),
+        backgroundColor: AppColors.surface,
+        title: const Text(
+          'Log out?',
+          style: TextStyle(color: AppColors.textPrimary),
+        ),
         content: const Text(
           'You will be returned to the login screen.',
-          style: TextStyle(color: Colors.white60),
+          style: TextStyle(color: AppColors.textSecondary),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel',
-                style: TextStyle(color: Colors.white54)),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: AppColors.textSecondary),
+            ),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Log out',
-                style: TextStyle(color: Colors.redAccent)),
+            child: const Text(
+              'Log out',
+              style: TextStyle(color: AppColors.danger),
+            ),
           ),
         ],
       ),
@@ -200,24 +212,19 @@ class _ProfileView extends StatelessWidget {
     }
   }
 
-
   Widget _buildFooter() {
     return const Center(
       child: Text(
         'Reel v1.0  ·  TMDB  ·  Firebase',
-        style: TextStyle(color: Colors.white24, fontSize: 12),
+        style: TextStyle(color: AppColors.textMuted, fontSize: 12),
       ),
     );
   }
 }
 
-
 class _StatCard extends StatelessWidget {
   final int count;
   final String label;
-
-  static const Color _accent = Color(0xFFFFB800);
-  static const Color _surface = Color(0xFF1F1F1F);
 
   const _StatCard({required this.count, required this.label});
 
@@ -226,7 +233,7 @@ class _StatCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
       decoration: BoxDecoration(
-        color: _surface,
+        color: AppColors.surface,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
@@ -235,7 +242,7 @@ class _StatCard extends StatelessWidget {
           Text(
             '$count',
             style: const TextStyle(
-              color: _accent,
+              color: AppColors.accent,
               fontSize: 22,
               fontWeight: FontWeight.bold,
             ),
@@ -244,7 +251,7 @@ class _StatCard extends StatelessWidget {
           Text(
             label,
             style: const TextStyle(
-              color: Colors.white38,
+              color: AppColors.textMuted,
               fontSize: 9,
               fontWeight: FontWeight.w600,
               letterSpacing: 0.8,

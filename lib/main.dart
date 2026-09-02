@@ -1,13 +1,14 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_2/core/theme/app_theme.dart';
 import 'package:flutter_application_2/features/auth/provider/auth_provider.dart';
-import 'package:flutter_application_2/features/auth/view/login_screen.dart';
 import 'package:flutter_application_2/features/category/provider/category_provider.dart';
 import 'package:flutter_application_2/features/favourites/provider/favourites_provider.dart';
 import 'package:flutter_application_2/features/home/provider/home_provider.dart';
 import 'package:flutter_application_2/features/my_lists/provider/my_lists_provider.dart';
 import 'package:flutter_application_2/features/profile/provider/profile_provider.dart';
 import 'package:flutter_application_2/features/search/provider/search_provider.dart';
+import 'package:flutter_application_2/features/splash/view/splash_screen.dart';
 import 'package:flutter_application_2/firebase_options.dart';
 import 'package:provider/provider.dart';
 
@@ -35,11 +36,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      color: Color(0xff0B0A0A),
-      theme: ThemeData(
-        primaryColor: Color(0xffffc107),
-      ),
-      home: const LoginScreen(),
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.theme,
+      home: const SplashScreen(),
       );
   }
 }

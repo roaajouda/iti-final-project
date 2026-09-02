@@ -1,9 +1,9 @@
-import 'package:flutter_application_2/models/movie.record.dart';
+import 'package:flutter_application_2/core/models/movie.record.dart';
 
 import '../../../core/services/api_service.dart';
 import '../../../core/services/database_service.dart';
-import '../../../models/single_movie.dart';
-import '../../../models/movies.dart';
+import '../../../core/models/single_movie.dart';
+import '../../../core/models/movies.dart';
 
 class MovieDetailsController {
   final int movieId;

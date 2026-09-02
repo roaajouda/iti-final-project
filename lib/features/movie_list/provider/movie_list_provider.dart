@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/core/exceptions/app_exception.dart';
 import 'package:flutter_application_2/features/movie_list/controller/movie_list_controller.dart';
-import 'package:flutter_application_2/models/movies.dart';
+import 'package:flutter_application_2/core/models/movies.dart';
 
 enum MovieListState { idle, loading, loadingMore, error, success }
 

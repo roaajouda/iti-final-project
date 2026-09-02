@@ -1,5 +1,5 @@
 import 'package:flutter_application_2/core/services/api_service.dart';
-import 'package:flutter_application_2/models/movies.dart';
+import 'package:flutter_application_2/core/models/movies.dart';
 
 class CategoryController {
   final APIService _apiService = APIService();

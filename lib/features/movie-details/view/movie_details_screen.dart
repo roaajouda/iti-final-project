@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../provider/movie_details_provider.dart';
-import '../../../models/single_movie.dart';
-import '../../../models/movies.dart';
+import '../../../core/models/single_movie.dart';
+import '../../../core/models/movies.dart';
 
 class MovieDetailsScreen extends StatelessWidget {
   final int movieId;

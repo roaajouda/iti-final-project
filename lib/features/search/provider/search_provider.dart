@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import '../../../models/movies.dart';
+import '../../../core/models/movies.dart';
 import '../controller/search_controller.dart';
 
 enum SearchState { idle, loading, error, success }

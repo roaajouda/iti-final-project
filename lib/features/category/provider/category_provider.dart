@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/core/exceptions/app_exception.dart';
 import 'package:flutter_application_2/features/category/controller/category_controller.dart';
-import 'package:flutter_application_2/models/movies.dart';
+import 'package:flutter_application_2/core/models/movies.dart';
 
 enum CategoryState { idle, loading, error, success }
 

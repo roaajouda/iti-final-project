@@ -1,21 +1,33 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
-import 'package:flutter_application_2/models/movie.record.dart';
+import 'package:flutter_application_2/core/models/movie.record.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi_web/sqflite_ffi_web.dart';
 
 class DatabaseService {
-  static Database? _db;
+  DatabaseService._();
+  static final DatabaseService _instance = DatabaseService._();
+  factory DatabaseService() => _instance;
+
+  Completer<Database>? _completer;
 
   Future<Database> get database async {
-    _db ??= await _initDb();
-    return _db!;
+    if (_completer != null) return _completer!.future;
+    _completer = Completer<Database>();
+    try {
+      _completer!.complete(await _initDb());
+    } catch (e) {
+      _completer = null;
+      rethrow;
+    }
+    return _completer!.future;
   }
 
   Future<Database> _initDb() async {
     if (kIsWeb) {
       databaseFactory = databaseFactoryFfiWeb;
-
       return databaseFactory.openDatabase(
         'movies_app.db',
         options: OpenDatabaseOptions(version: 1, onCreate: _onCreate),
@@ -42,10 +54,8 @@ class DatabaseService {
     }
   }
 
-
   Future<void> _insert(String table, MovieRecord movie) async {
     final db = await database;
-
     await db.insert(
       table,
       movie.toMap(),
@@ -55,13 +65,11 @@ class DatabaseService {
 
   Future<void> _delete(String table, int movieId) async {
     final db = await database;
-
     await db.delete(table, where: 'id = ?', whereArgs: [movieId]);
   }
 
   Future<bool> _exists(String table, int movieId) async {
     final db = await database;
-
     final rows = await db.query(
       table,
       columns: ['id'],
@@ -69,52 +77,33 @@ class DatabaseService {
       whereArgs: [movieId],
       limit: 1,
     );
-
     return rows.isNotEmpty;
   }
 
   Future<List<MovieRecord>> _getAll(String table) async {
     final db = await database;
-
     final rows = await db.query(table, orderBy: 'rowid DESC');
-
     return rows.map(MovieRecord.fromMap).toList();
   }
 
-
   Future<void> addFavourite(MovieRecord movie) => _insert('favourites', movie);
-
   Future<void> removeFavourite(int id) => _delete('favourites', id);
-
   Future<bool> isFavourite(int id) => _exists('favourites', id);
-
   Future<List<MovieRecord>> getFavourites() => _getAll('favourites');
 
-
   Future<void> addWatchNow(MovieRecord movie) => _insert('watch_now', movie);
-
   Future<void> removeWatchNow(int id) => _delete('watch_now', id);
-
   Future<bool> isWatchNow(int id) => _exists('watch_now', id);
-
   Future<List<MovieRecord>> getWatchNow() => _getAll('watch_now');
-
 
   Future<void> addWatchLater(MovieRecord movie) =>
       _insert('watch_later', movie);
-
   Future<void> removeWatchLater(int id) => _delete('watch_later', id);
-
   Future<bool> isWatchLater(int id) => _exists('watch_later', id);
-
   Future<List<MovieRecord>> getWatchLater() => _getAll('watch_later');
 
-
   Future<void> addWatched(MovieRecord movie) => _insert('watched', movie);
-
   Future<void> removeWatched(int id) => _delete('watched', id);
-
   Future<bool> isWatched(int id) => _exists('watched', id);
-
   Future<List<MovieRecord>> getWatched() => _getAll('watched');
 }

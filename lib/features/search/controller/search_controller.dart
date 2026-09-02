@@ -1,5 +1,5 @@
 import '../../../core/services/api_service.dart';
-import '../../../models/movies.dart';
+import '../../../core/models/movies.dart';
 
 class SearchScreenController {
   final APIService _apiService = APIService();

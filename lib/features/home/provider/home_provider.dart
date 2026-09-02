@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_2/core/exceptions/app_exception.dart';
 import 'package:flutter_application_2/features/home/controller/home_controller.dart';
-import 'package:flutter_application_2/models/movies.dart';
-import 'package:flutter_application_2/models/single_movie.dart';
+import 'package:flutter_application_2/core/models/movies.dart';
+import 'package:flutter_application_2/core/models/single_movie.dart';
 
 enum HomeState { idle, loading, error, success }
 

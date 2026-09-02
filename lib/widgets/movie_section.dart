@@ -1,19 +1,17 @@
 import 'package:flutter/material.dart';
-import '../models/movies.dart';
-import 'movie_card.dart';
+import 'package:flutter_application_2/core/models/movies.dart';
+import 'package:flutter_application_2/widgets/movie_card.dart';
 
 class MovieSection extends StatelessWidget {
   final String title;
   final Movies? movies;
   final VoidCallback? onSeeAll;
-  final void Function(Result movie)? onMovieTap;
 
   const MovieSection({
     super.key,
     required this.title,
     required this.movies,
     this.onSeeAll,
-    this.onMovieTap,
   });
 
   @override
@@ -59,10 +57,14 @@ class MovieSection extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             itemCount: displayed.length,
             itemBuilder: (context, index) {
-              final movie = displayed[index];
-              return MovieCard(
-                movie: movie,
-                onTap: onMovieTap != null ? () => onMovieTap!(movie) : null,
+              return SizedBox(
+                width: 108,
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    right: index < displayed.length - 1 ? 10 : 0,
+                  ),
+                  child: MovieCard.fromResult(displayed[index]),
+                ),
               );
             },
           ),

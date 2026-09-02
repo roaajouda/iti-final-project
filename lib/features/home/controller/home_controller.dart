@@ -1,6 +1,6 @@
 import 'package:flutter_application_2/core/services/api_service.dart';
-import 'package:flutter_application_2/models/movies.dart';
-import 'package:flutter_application_2/models/single_movie.dart';
+import 'package:flutter_application_2/core/models/movies.dart';
+import 'package:flutter_application_2/core/models/single_movie.dart';
 
 class HomeController {
   final APIService _apiService = APIService();

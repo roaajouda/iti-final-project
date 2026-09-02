@@ -1,4 +1,4 @@
-import 'package:flutter_application_2/models/movies.dart';
+import 'package:flutter_application_2/core/models/movies.dart';
 
 class MovieListController {
   final Future<Movies> Function(int page) fetcher;

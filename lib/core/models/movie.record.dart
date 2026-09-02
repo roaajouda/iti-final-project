@@ -1,4 +1,4 @@
-import '../features/movie_details/../../models/single_movie.dart';
+import 'single_movie.dart';
 class MovieRecord {
   final int id;
   final String title;

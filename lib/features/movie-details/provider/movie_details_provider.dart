@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_application_2/models/movie.record.dart';
+import 'package:flutter_application_2/core/models/movie.record.dart';
 import '../../../core/exceptions/app_exception.dart';
-import '../../../models/movies.dart';
-import '../../../models/single_movie.dart';
+import '../../../core/models/movies.dart';
+import '../../../core/models/single_movie.dart';
 import '../controller/movie_details_controller.dart';
 
 enum MovieDetailsState { idle, loading, error, success }
